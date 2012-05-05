@@ -37,7 +37,10 @@ public class MSCCommand implements CommandExecutor{
 	}
 	
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-				
+		
+	Player player = (Player)sender;
+	if (!player.hasPermission("msc.command")) {return false;}
+		
   	if (args.length == 0) {
   			sender.sendMessage(plugin.prefix + "Try /" + command.getName() + " HELP");
 			return true;
@@ -55,7 +58,7 @@ public class MSCCommand implements CommandExecutor{
 	    		if (args.length > 1)
 	    		{
 	    			sender.sendMessage(ChatColor.AQUA + "Too manyparameters! Try /MSC HELP");
-	    			return true;
+	    			return false;
 	    		}
 	    		sender.sendMessage(ChatColor.AQUA + " /" + command.getName() + " HELP: Shows this help page");
 	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " STATS: Lists current spawn stats.");
@@ -65,10 +68,17 @@ public class MSCCommand implements CommandExecutor{
 	    		
 	    		sender.sendMessage(ChatColor.DARK_AQUA + "MobSpawnControl Stats");
 	    		sender.sendMessage(ChatColor.DARK_AQUA + "=====================");
+	    		
+	    		// Check permissions for STATS command
+	    		if (!player.hasPermission("msc.stats")) {
+	    			sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
+	    			return false;
+	    		}
+	    		
 	    		if (args.length > 1)
 	    		{
 	    			sender.sendMessage(ChatColor.AQUA + "Too manyparameters! Try /MSC STATS");
-	    			return true;
+	    			return false;
 	    		}
 	    		findTopSpawners(sender);
 	    		break;
@@ -78,14 +88,20 @@ public class MSCCommand implements CommandExecutor{
 	    		sender.sendMessage(ChatColor.DARK_AQUA + "MobSpawnControl TP");
 	    		sender.sendMessage(ChatColor.DARK_AQUA + "==================");
 	    		
+	    		// Check permissions for TP command
+	    		if (!player.hasPermission("msc.tp")) {
+	    			sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
+	    			return false;
+	    		}
+
 	    		// Did they type too many parameters?
 	    		if (args.length > 2)
 	    		{
 	    			sender.sendMessage(ChatColor.AQUA +  "Too manyparameters! Try /MSC TP");
-	    			return true;
+	    			return false;
 	    		}
 	    		
-	    		// Did they only type 1 paramater?
+	    		// Did they only type 1 parameter?
 	    		if (args.length == 1)
 	    		{
 	    			sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " TP <type> <num>: Teleport to a given stat location.");
@@ -110,7 +126,7 @@ public class MSCCommand implements CommandExecutor{
 	    		}
 	    		
 	    		// Teleport player to spawner
-	    		Player player = (Player)sender;
+	    		
 	    		player.teleport(topSpawners.get(spawnNumber).getLocation());
 	    		sender.sendMessage(ChatColor.AQUA +  "Teleporting you to spawner: " + spawnNumber);
 	    		break;

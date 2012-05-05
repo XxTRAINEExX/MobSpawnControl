@@ -1,6 +1,6 @@
 name: MobSpawnControl
 main: net.yeticraft.xxtraineexx.mobspawncontrol.MobSpawnControl
-version: 0.2
+version: 0.9
 authors: [XxTRAINEExX]
 
 commands:
@@ -10,3 +10,19 @@ commands:
   mobspawncontrol:
     description: Interact with Mob Spawn Control
     usage: /<command>
+permissions:
+    msc.*:
+        description: Gives access to all MobSpawnControl features
+        children:
+            ff.command: true
+            ff.stats: true
+            ff.tp: true
+    msc.command:
+        description: Allows player access to MSC commands
+        default: op
+    msc.stats:
+        description: Allows players access to STATS command
+        default: op
+    msc.tp:
+        description: Allows players access to TP command
+        default: op
