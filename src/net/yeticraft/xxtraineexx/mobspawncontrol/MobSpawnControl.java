@@ -1,6 +1,8 @@
 package net.yeticraft.xxtraineexx.mobspawncontrol;
 
 import java.util.logging.Logger;
+
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -11,6 +13,7 @@ public class MobSpawnControl extends JavaPlugin{
 	public String prefix = "[MobSpawnControl] ";
 	public FileConfiguration config;
 	public int spawnsAllowed;
+	public int reportSize;
 	public MSCListener myListener;
 	
 	
@@ -19,6 +22,9 @@ public class MobSpawnControl extends JavaPlugin{
 		myListener = new MSCListener(this);
 		PluginDescriptionFile pdffile = this.getDescription();
 		loadMainConfig();
+		CommandExecutor MSCCommandExecutor = new MSCCommand(this);
+		getCommand("mobspawncontorl").setExecutor(MSCCommandExecutor);
+    	getCommand("msc").setExecutor(MSCCommandExecutor);  	
     	log.info(prefix + " " + pdffile.getVersion() + " Enabled"); 	
     	
 	}
@@ -33,12 +39,14 @@ public class MobSpawnControl extends JavaPlugin{
 		// Read the config file
     	config = getConfig();
     	spawnsAllowed = config.getInt("spawnsAllowed");
+    	reportSize = config.getInt("reportSize");
     	
-    	if (spawnsAllowed==0)
+    	if (spawnsAllowed==0 || reportSize ==0)
     	{
     		// Config file must be empty... lets generate a new one.
-    		log.info(prefix + "Configuration File not found. Generating default.");
+    		log.info(prefix + "Configuration File not found or error found in file. Generating default.");
     		config.set("spawnsAllowed", (int)10);
+    		config.set("reportSize", (int)10);
     		saveConfig();
     	}
     	else{

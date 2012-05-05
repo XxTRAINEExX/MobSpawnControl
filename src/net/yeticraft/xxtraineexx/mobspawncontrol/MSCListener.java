@@ -4,8 +4,10 @@ package net.yeticraft.xxtraineexx.mobspawncontrol;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -18,6 +20,9 @@ public class MSCListener implements Listener{
 	public static MobSpawnControl plugin;
 	HashMap<Block, Set<Entity>> spawnerSet = new HashMap<Block, Set<Entity>>();
 	HashMap<Entity, Block> mobSet = new HashMap<Entity, Block>();
+	HashMap<Block, Player> spawnOwners = new HashMap<Block, Player>();
+	HashMap<Block, Integer> spawnCount = new HashMap<Block, Integer>();
+	
 
 	public MSCListener(MobSpawnControl plugin) {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -35,6 +40,7 @@ public class MSCListener implements Listener{
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onCreatureSpawn(CreatureSpawnEvent e) {
 		
+		
 		// If this didn't come from a spawner, return out.
 		if (!e.getSpawnReason().toString().equalsIgnoreCase("SPAWNER")){
 
@@ -45,18 +51,19 @@ public class MSCListener implements Listener{
 		plugin.log.info("Mob spawned FROM  a spawner.. Finding loc.");
 		
 		// Find the spawner this monster came from.
-		Block spawnedMob = e.getLocation().getBlock();
+		Block spawnedMobLoc = e.getLocation().getBlock();
 		Block currentBlock = null;
 		Block mobSpawner = null;
-		
+		Entity spawnedMob = e.getEntity();
+		Player player = null;
 		
 		// Mobs can only spawn within a 8x3x8 area
-		int lowerX = spawnedMob.getX() - 8;
-		int upperX = spawnedMob.getX() + 8;
-		int lowerY = spawnedMob.getY() - 3;
-		int upperY = spawnedMob.getY() + 3;
-		int lowerZ = spawnedMob.getZ() - 8;
-		int upperZ = spawnedMob.getZ() + 8;
+		int lowerX = spawnedMobLoc.getX() - 7;
+		int upperX = spawnedMobLoc.getX() + 7;
+		int lowerY = spawnedMobLoc.getY() - 2;
+		int upperY = spawnedMobLoc.getY() + 2;
+		int lowerZ = spawnedMobLoc.getZ() - 7;
+		int upperZ = spawnedMobLoc.getZ() + 7;
 		boolean keepLooping = true;
 		
 		plugin.log.info("lowerX: " + lowerX);
@@ -86,8 +93,7 @@ public class MSCListener implements Listener{
 				}
 			}
 		}
-		
-		
+				
 		
 		// If mobSpawner is still null we must have missed the spawner somehow.
 		if (mobSpawner == null){
@@ -95,14 +101,29 @@ public class MSCListener implements Listener{
 			return;
 		}
 		
+		// Checking for nearby players
+		for (Player nearby : Bukkit.getServer().getOnlinePlayers()) {	
+			double nearbyDistance = nearby.getLocation().distance(mobSpawner.getLocation());
+			if (nearbyDistance <= 17){
+				player = nearby;
+				plugin.log.info("Nearby player [" + player.getName() + "] found [" + Math.floor(nearbyDistance) + "] blocks away.");
+				break;
+			}
+			
+		}
+
+		// Assigning this spawner to the player.
+		spawnOwners.put(mobSpawner, player);
+		
 		// Lets create a new Hashset to store the mobs associated with a spawner
 		Set<Entity> mobList = new HashSet<Entity>();
 		
 		// If the spawner is NOT in the hashmap we will add the monster to the new mobList and add the spawner/mobList to the spawnerSet hashmap
 		if (!spawnerSet.containsKey(mobSpawner)){
-			mobList.add(e.getEntity());
-			mobSet.put(e.getEntity(), mobSpawner);
+			mobList.add(spawnedMob);
+			mobSet.put(spawnedMob, mobSpawner);
 			spawnerSet.put(mobSpawner, mobList);
+			spawnCount.put(mobSpawner, mobList.size());
 			plugin.log.info("New spawner found.  Adding to hashset / hashmap." + mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ());
 			e.setCancelled(false);
 			return;
@@ -118,8 +139,9 @@ public class MSCListener implements Listener{
 		}
 		
 		// Looks like the current mobSpawner is not at its maximum. Let's increment.
-		mobList.add(e.getEntity());
-		mobSet.put(e.getEntity(), mobSpawner);
+		mobList.add(spawnedMob);
+		mobSet.put(spawnedMob, mobSpawner);
+		spawnCount.put(mobSpawner, mobList.size());
 		plugin.log.info("Spawner currently contains [" + mobList.size() + "] monsters. Allowing spawn." + mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ());
 		e.setCancelled(false);
 		return;
@@ -129,20 +151,24 @@ public class MSCListener implements Listener{
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDeath(EntityDeathEvent e) {
 		
-	
-		if (mobSet.containsKey(e.getEntity())){
+		Entity spawnedMob = e.getEntity();
+		
+		if (mobSet.containsKey(spawnedMob)){
 			
 			// Finding the spawner this entity is attached to
-			Block mobSpawner = mobSet.get(e.getEntity());
+			Block mobSpawner = mobSet.get(spawnedMob);
 			
 			// Finding the MobList associated with this spawner
 			Set<Entity> mobList = spawnerSet.get(mobSpawner);
 			
 			// Removing this mob from the spawnList
-			mobList.remove(e.getEntity());
+			mobList.remove(spawnedMob);
 			
 			// Removing this mob from the mobSet
-			mobSet.remove(e.getEntity());
+			mobSet.remove(spawnedMob);
+			
+			// Update the spawnCounter Hashmap
+			spawnCount.put(mobSpawner, mobList.size());
 			
 			// Let's report a mob has been removed from a spawner. (Must have died)
 			plugin.log.info("Mob removed from spawner at:" + mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ());
