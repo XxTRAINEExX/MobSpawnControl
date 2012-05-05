@@ -1,0 +1,12 @@
+name: MobSpawnControl
+main: net.yeticraft.xxtraineexx.mobspawncontrol.MobSpawnControl
+version: 0.1
+authors: [XxTRAINEExX]
+
+commands:
+  msc:
+    description: Interact with Mob Spawn Control
+    usage: /<command>
+  mobspawncontrol:
+    description: Interact with Mob Spawn Control
+    usage: /<command>
