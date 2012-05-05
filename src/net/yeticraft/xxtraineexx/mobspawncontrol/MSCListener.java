@@ -172,6 +172,7 @@ public class MSCListener implements Listener{
 			
 			// Let's report a mob has been removed from a spawner. (Must have died)
 			plugin.log.info("Mob removed from spawner at:" + mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ());
+			plugin.log.info("Spawner Mob Count at:" + mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ() + " is: " + mobList.size());
 			
 		}
 		
