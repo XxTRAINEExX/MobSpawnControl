@@ -17,7 +17,7 @@ public class MSCListener implements Listener{
 
 	public static MobSpawnControl plugin;
 	HashMap<Block, Set<Entity>> spawnerSet = new HashMap<Block, Set<Entity>>();
-	Set<Entity> mobsLinkedToSpawner = new HashSet<Entity>();
+	HashMap<Entity, Block> mobSet = new HashMap<Entity, Block>();
 
 	public MSCListener(MobSpawnControl plugin) {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -36,7 +36,13 @@ public class MSCListener implements Listener{
 	public void onCreatureSpawn(CreatureSpawnEvent e) {
 		
 		// If this didn't come from a spawner, return out.
-		if (!e.getSpawnReason().toString().equalsIgnoreCase("SPAWNER")){return;}
+		if (!e.getSpawnReason().toString().equalsIgnoreCase("SPAWNER")){
+
+			return;
+			
+		}
+		
+		plugin.log.info("Mob spawned FROM  a spawner.. Finding loc.");
 		
 		// Find the spawner this monster came from.
 		Block spawnedMob = e.getLocation().getBlock();
@@ -51,19 +57,28 @@ public class MSCListener implements Listener{
 		int upperY = spawnedMob.getY() + 3;
 		int lowerZ = spawnedMob.getZ() - 8;
 		int upperZ = spawnedMob.getZ() + 8;
-		boolean finished = false;
+		boolean keepLooping = true;
+		
+		plugin.log.info("lowerX: " + lowerX);
+		plugin.log.info("upperX: " + upperX);
+		plugin.log.info("lowerY: " + lowerY);
+		plugin.log.info("upperY: " + upperY);
+		plugin.log.info("lowerZ: " + lowerZ);
+		plugin.log.info("upperZ: " + upperZ);
+		
 		
 		// Searching all nearby blocks to find the spawner
-		for (int y = lowerY; y <= upperY || finished; y++){
-			for (int x = lowerX; x <= upperX || finished; x++){
+		for (int y = lowerY; y <= upperY && keepLooping; y++){
+			for (int x = lowerX; x <= upperX && keepLooping; x++){
 				for (int z = lowerZ; z <= upperZ; z++){
 					
 					currentBlock = e.getLocation().getWorld().getBlockAt(x, y, z);
 					if (currentBlock.getTypeId() == 52){
 						
 						// Found your ass...
+						plugin.log.info("Found spawner at: " + currentBlock.getX() + "," + currentBlock.getY() + "," + currentBlock.getZ());
 						mobSpawner = currentBlock;
-						finished = true;
+						keepLooping = false;
 						break;
 						
 					}
@@ -72,37 +87,40 @@ public class MSCListener implements Listener{
 			}
 		}
 		
+		
+		
 		// If mobSpawner is still null we must have missed the spawner somehow.
 		if (mobSpawner == null){
 			plugin.log.info("Spawner not found. Something went wrong.");
 			return;
 		}
-
+		
 		// Lets create a new Hashset to store the mobs associated with a spawner
 		Set<Entity> mobList = new HashSet<Entity>();
 		
 		// If the spawner is NOT in the hashmap we will add the monster to the new mobList and add the spawner/mobList to the spawnerSet hashmap
 		if (!spawnerSet.containsKey(mobSpawner)){
 			mobList.add(e.getEntity());
-			mobsLinkedToSpawner.add(e.getEntity());
+			mobSet.put(e.getEntity(), mobSpawner);
 			spawnerSet.put(mobSpawner, mobList);
-			plugin.log.info("New spawner found.  Adding to hashset / hashmap.");
+			plugin.log.info("New spawner found.  Adding to hashset / hashmap." + mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ());
 			e.setCancelled(false);
 			return;
 		}
 		
 		// Looks like the mobSpawner is already in the spawnerSet. Lets check to see if this set has reached its limit
 		mobList = spawnerSet.get(mobSpawner);
-		if (mobList.size() > plugin.spawnsAllowed){
-			plugin.log.info("Spawner maximum reached: ["+ mobList.size() + "] Stopping additional spawns");
+		
+		if (mobList.size() >= plugin.spawnsAllowed){
+			plugin.log.info("Spawner maximum reached: ["+ mobList.size() + "] Stopping additional spawns: " + mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ());
 			e.setCancelled(true);
 			return;
 		}
 		
 		// Looks like the current mobSpawner is not at its maximum. Let's increment.
 		mobList.add(e.getEntity());
-		mobsLinkedToSpawner.add(e.getEntity());
-		plugin.log.info("Spawner currently contains [" + mobList.size() + "] monsters. Allowing spawn.");
+		mobSet.put(e.getEntity(), mobSpawner);
+		plugin.log.info("Spawner currently contains [" + mobList.size() + "] monsters. Allowing spawn." + mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ());
 		e.setCancelled(false);
 		return;
 		
@@ -111,8 +129,24 @@ public class MSCListener implements Listener{
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDeath(EntityDeathEvent e) {
 		
-		if (mobsLinkedToSpawner.contains(e.getEntity())){
-			mobsLinkedToSpawner.remove(e.getEntity());
+	
+		if (mobSet.containsKey(e.getEntity())){
+			
+			// Finding the spawner this entity is attached to
+			Block mobSpawner = mobSet.get(e.getEntity());
+			
+			// Finding the MobList associated with this spawner
+			Set<Entity> mobList = spawnerSet.get(mobSpawner);
+			
+			// Removing this mob from the spawnList
+			mobList.remove(e.getEntity());
+			
+			// Removing this mob from the mobSet
+			mobSet.remove(e.getEntity());
+			
+			// Let's report a mob has been removed from a spawner. (Must have died)
+			plugin.log.info("Mob removed from spawner at:" + mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ());
+			
 		}
 		
 	}
