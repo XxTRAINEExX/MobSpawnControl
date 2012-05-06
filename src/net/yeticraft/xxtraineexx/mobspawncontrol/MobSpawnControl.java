@@ -23,7 +23,7 @@ public class MobSpawnControl extends JavaPlugin{
 		PluginDescriptionFile pdffile = this.getDescription();
 		loadMainConfig();
 		CommandExecutor MSCCommandExecutor = new MSCCommand(this);
-		getCommand("mobspawncontorl").setExecutor(MSCCommandExecutor);
+		getCommand("mobspawncontrol").setExecutor(MSCCommandExecutor);
     	getCommand("msc").setExecutor(MSCCommandExecutor);  	
     	log.info(prefix + " " + pdffile.getVersion() + " Enabled"); 	
     	
@@ -45,7 +45,7 @@ public class MobSpawnControl extends JavaPlugin{
     	{
     		// Config file must be empty... lets generate a new one.
     		log.info(prefix + "Configuration File not found or error found in file. Generating default.");
-    		config.set("spawnsAllowed", (int)10);
+    		config.set("spawnsAllowed", (int)80);
     		config.set("reportSize", (int)10);
     		saveConfig();
     	}

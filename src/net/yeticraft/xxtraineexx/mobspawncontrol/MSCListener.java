@@ -48,8 +48,6 @@ public class MSCListener implements Listener{
 			
 		}
 		
-		plugin.log.info("Mob spawned FROM  a spawner.. Finding loc.");
-		
 		// Find the spawner this monster came from.
 		Block spawnedMobLoc = e.getLocation().getBlock();
 		Block currentBlock = null;
@@ -66,14 +64,6 @@ public class MSCListener implements Listener{
 		int upperZ = spawnedMobLoc.getZ() + 7;
 		boolean keepLooping = true;
 		
-		plugin.log.info("lowerX: " + lowerX);
-		plugin.log.info("upperX: " + upperX);
-		plugin.log.info("lowerY: " + lowerY);
-		plugin.log.info("upperY: " + upperY);
-		plugin.log.info("lowerZ: " + lowerZ);
-		plugin.log.info("upperZ: " + upperZ);
-		
-		
 		// Searching all nearby blocks to find the spawner
 		for (int y = lowerY; y <= upperY && keepLooping; y++){
 			for (int x = lowerX; x <= upperX && keepLooping; x++){
@@ -81,13 +71,9 @@ public class MSCListener implements Listener{
 					
 					currentBlock = e.getLocation().getWorld().getBlockAt(x, y, z);
 					if (currentBlock.getTypeId() == 52){
-						
-						// Found your ass...
-						plugin.log.info("Found spawner at: " + currentBlock.getX() + "," + currentBlock.getY() + "," + currentBlock.getZ());
 						mobSpawner = currentBlock;
 						keepLooping = false;
 						break;
-						
 					}
 					
 				}
@@ -97,7 +83,10 @@ public class MSCListener implements Listener{
 		
 		// If mobSpawner is still null we must have missed the spawner somehow.
 		if (mobSpawner == null){
-			plugin.log.info("Spawner not found. Something went wrong.");
+			plugin.log.info(plugin.prefix + "Spawner not found for spawned creature at: " 
+					+ spawnedMob.getLocation().getBlock().getX() + ","
+					+ spawnedMob.getLocation().getBlock().getY() + ","
+					+ spawnedMob.getLocation().getBlock().getZ());
 			return;
 		}
 		
@@ -106,7 +95,8 @@ public class MSCListener implements Listener{
 			double nearbyDistance = nearby.getLocation().distance(mobSpawner.getLocation());
 			if (nearbyDistance <= 17){
 				player = nearby;
-				plugin.log.info("Nearby player [" + player.getName() + "] found [" + Math.floor(nearbyDistance) + "] blocks away.");
+				/*plugin.log.info("Nearby player [" + player.getName() + "] found [" + Math.floor(nearbyDistance) + "] blocks away from Mob spawner at: "
+						+ mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ());*/
 				break;
 			}
 			
@@ -124,7 +114,7 @@ public class MSCListener implements Listener{
 			mobSet.put(spawnedMob, mobSpawner);
 			spawnerSet.put(mobSpawner, mobList);
 			spawnCount.put(mobSpawner, mobList.size());
-			plugin.log.info("New spawner found.  Adding to hashset / hashmap." + mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ());
+			plugin.log.info("New spawner found.  Adding spawner to STATS: " + mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ());
 			e.setCancelled(false);
 			return;
 		}
@@ -133,7 +123,7 @@ public class MSCListener implements Listener{
 		mobList = spawnerSet.get(mobSpawner);
 		
 		if (mobList.size() >= plugin.spawnsAllowed){
-			plugin.log.info("Spawner maximum reached: ["+ mobList.size() + "] Stopping additional spawns: " + mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ());
+			plugin.log.info("Spawner maximum reached: " + player.getName() + " [" + mobList.size() + "] " + mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ());
 			e.setCancelled(true);
 			return;
 		}
@@ -142,7 +132,6 @@ public class MSCListener implements Listener{
 		mobList.add(spawnedMob);
 		mobSet.put(spawnedMob, mobSpawner);
 		spawnCount.put(mobSpawner, mobList.size());
-		plugin.log.info("Spawner currently contains [" + mobList.size() + "] monsters. Allowing spawn." + mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ());
 		e.setCancelled(false);
 		return;
 		
@@ -169,11 +158,7 @@ public class MSCListener implements Listener{
 			
 			// Update the spawnCounter Hashmap
 			spawnCount.put(mobSpawner, mobList.size());
-			
-			// Let's report a mob has been removed from a spawner. (Must have died)
-			plugin.log.info("Mob removed from spawner at:" + mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ());
-			plugin.log.info("Spawner Mob Count at:" + mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ() + " is: " + mobList.size());
-			
+				
 		}
 		
 	}

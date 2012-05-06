@@ -1,6 +1,6 @@
 name: MobSpawnControl
 main: net.yeticraft.xxtraineexx.mobspawncontrol.MobSpawnControl
-version: 1.0
+version: 1.5
 authors: [XxTRAINEExX]
 
 commands:
@@ -14,9 +14,10 @@ permissions:
     msc.*:
         description: Gives access to all MobSpawnControl features
         children:
-            ff.command: true
-            ff.stats: true
-            ff.tp: true
+            msc.command: true
+            msc.stats: true
+            msc.tp: true
+            msc.resetstats: true
     msc.command:
         description: Allows player access to MSC commands
         default: op
@@ -25,4 +26,7 @@ permissions:
         default: op
     msc.tp:
         description: Allows players access to TP command
+        default: op
+    msc.resetstats:
+        description: Allows players access to RESETSTATS command
         default: op
