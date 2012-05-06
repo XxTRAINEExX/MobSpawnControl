@@ -53,6 +53,9 @@ public class MobSpawnControl extends JavaPlugin{
     		log.info(prefix + "Existing Configuration file found, loading."); 
     	}
     	
+    	spawnsAllowed = config.getInt("spawnsAllowed");
+    	reportSize = config.getInt("reportSize");
+    	
 	}
 
 }
