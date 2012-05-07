@@ -2,9 +2,6 @@ package net.yeticraft.xxtraineexx.mobspawncontrol;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
-import java.util.UUID;
-
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -161,11 +158,8 @@ public class MSCCommand implements CommandExecutor{
 	    			return true;
 	    		}
 	    		
-	    		plugin.myListener.mobSet.clear();
-	    		// plugin.myListener.spawnCount.clear();
-	    		plugin.myListener.spawnerSet.clear();
-	    		plugin.myListener.spawnOwners.clear();
-	    		plugin.myListener.mobUUIDMap.clear();
+	    		plugin.myListener.activeMobs.clear();
+	    		plugin.myListener.activeSpawners.clear();
 	    		topSpawners.clear();
 	    		sender.sendMessage(ChatColor.AQUA + "All stats reset successfully!");
 	    		plugin.log.info(plugin.prefix + "All stats cleared from the server by: " + player.getName());
@@ -236,37 +230,37 @@ public class MSCCommand implements CommandExecutor{
 	
 	public void findTopSpawners(CommandSender sender){
 		
-		HashMap<Block, Player> spawnOwners = plugin.myListener.spawnOwners;
-		HashMap<Block, Set<UUID>> spawnerSet = plugin.myListener.spawnerSet;
+		HashMap<Block, MSCSpawner> activeSpawners = plugin.myListener.activeSpawners;
 		topSpawners.clear();
 	
 		// Iterating through all spawners in the hashmap
-		Iterator<Block> it = spawnerSet.keySet().iterator();
+		Iterator<Block> it = activeSpawners.keySet().iterator();
 		int i = 1;
 		while(it.hasNext() && i <= plugin.reportSize) {
-
+			
 			Block spawner = it.next();
 			
-			if (spawnerSet.get(spawner).size() > (int)((double)plugin.spawnsAllowed * .75)){
-				sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + spawnOwners.get(spawner).getName() 
-						+ " : " + ChatColor.RED + spawnerSet.get(spawner).size() + "/" + plugin.spawnsAllowed);
+			if (activeSpawners.get(spawner).getMobList().size() > (int)((double)plugin.spawnsAllowed * .75)){
+				sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + activeSpawners.get(spawner).getPlayer().getName()
+						+ " : " + ChatColor.RED + activeSpawners.get(spawner).getMobList().size() + "/" + plugin.spawnsAllowed);
 				topSpawners.put(i,spawner);
 				i++;
 				continue;
 			}
 			
-			if (spawnerSet.get(spawner).size() > (int)((double)plugin.spawnsAllowed * .50)){
-				sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + spawnOwners.get(spawner).getName() 
-						+ " : " + ChatColor.YELLOW + spawnerSet.get(spawner).size() + "/" + plugin.spawnsAllowed);
+			if (activeSpawners.get(spawner).getMobList().size() > (int)((double)plugin.spawnsAllowed * .50)){
+				sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + activeSpawners.get(spawner).getPlayer().getName()
+						+ " : " + ChatColor.YELLOW + activeSpawners.get(spawner).getMobList().size() + "/" + plugin.spawnsAllowed);
 				topSpawners.put(i,spawner);
 				i++;
 				continue;
 			}
 			
-			sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + spawnOwners.get(spawner).getName() 
-					+ " : " + spawnerSet.get(spawner).size() + "/" + plugin.spawnsAllowed);
+			sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + activeSpawners.get(spawner).getPlayer().getName()
+					+ " : " + activeSpawners.get(spawner).getMobList().size() + "/" + plugin.spawnsAllowed);
 			topSpawners.put(i,spawner);
 			i++;
+		
 			
 		}
 		
