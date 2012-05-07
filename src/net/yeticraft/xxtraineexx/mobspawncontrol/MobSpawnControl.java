@@ -15,7 +15,7 @@ public class MobSpawnControl extends JavaPlugin{
 	public int spawnsAllowed;
 	public int reportSize;
 	public MSCListener myListener;
-	
+	public boolean debug = false;
 	
 	public void onEnable() {
 		
@@ -48,13 +48,13 @@ public class MobSpawnControl extends JavaPlugin{
     		config.set("spawnsAllowed", (int)80);
     		config.set("reportSize", (int)10);
     		saveConfig();
-    	}
+    		spawnsAllowed = 80;
+        	reportSize = 20;
+        }
     	else{
     		log.info(prefix + "Existing Configuration file found, loading."); 
     	}
     	
-    	spawnsAllowed = config.getInt("spawnsAllowed");
-    	reportSize = config.getInt("reportSize");
     	
 	}
 

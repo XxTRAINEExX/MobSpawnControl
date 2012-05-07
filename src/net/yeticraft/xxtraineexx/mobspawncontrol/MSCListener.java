@@ -95,8 +95,6 @@ public class MSCListener implements Listener{
 			double nearbyDistance = nearby.getLocation().distance(mobSpawner.getLocation());
 			if (nearbyDistance <= 17){
 				player = nearby;
-				/*plugin.log.info("Nearby player [" + player.getName() + "] found [" + Math.floor(nearbyDistance) + "] blocks away from Mob spawner at: "
-						+ mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ());*/
 				break;
 			}
 			
@@ -105,6 +103,7 @@ public class MSCListener implements Listener{
 		// Assigning this spawner to the player.
 		spawnOwners.put(mobSpawner, player);
 		
+			
 		// Lets create a new Hashset to store the mobs associated with a spawner
 		Set<Entity> mobList = new HashSet<Entity>();
 		
@@ -114,8 +113,9 @@ public class MSCListener implements Listener{
 			mobSet.put(spawnedMob, mobSpawner);
 			spawnerSet.put(mobSpawner, mobList);
 			spawnCount.put(mobSpawner, mobList.size());
-			plugin.log.info("New spawner found.  Adding spawner to STATS: " + mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ());
 			e.setCancelled(false);
+			if (plugin.debug){ plugin.log.info(plugin.prefix + "NEW Spawner: ["+ mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ()
+					 + "] Owner: [" + player.getName() + "] Mob: [" + spawnedMob.getType().getName() + "] Spawn Count: [" + mobList.size() + "]");}
 			return;
 		}
 		
@@ -124,6 +124,8 @@ public class MSCListener implements Listener{
 		
 		if (mobList.size() >= plugin.spawnsAllowed){
 			plugin.log.info("Spawner maximum reached: " + player.getName() + " [" + mobList.size() + "] " + mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ());
+			if (plugin.debug){ plugin.log.info(plugin.prefix + "FULL Spawner: ["+ mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ()
+					 + "] Owner: [" + player.getName() + "] Mob: [" + spawnedMob.getType().getName() + "] Spawn Count: [" + mobList.size() + "]");}
 			e.setCancelled(true);
 			return;
 		}
@@ -132,6 +134,8 @@ public class MSCListener implements Listener{
 		mobList.add(spawnedMob);
 		mobSet.put(spawnedMob, mobSpawner);
 		spawnCount.put(mobSpawner, mobList.size());
+		if (plugin.debug){ plugin.log.info(plugin.prefix + "EXISTING Spawner: ["+ mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ()
+				 + "] Owner: [" + player.getName() + "] Mob: [" + spawnedMob.getType().getName() + "] Spawn Count: [" + mobList.size() + "]");}
 		e.setCancelled(false);
 		return;
 		
@@ -158,6 +162,9 @@ public class MSCListener implements Listener{
 			
 			// Update the spawnCounter Hashmap
 			spawnCount.put(mobSpawner, mobList.size());
+			
+			if (plugin.debug){ plugin.log.info(plugin.prefix + "MOB Killed from Spawner: ["+ mobSpawner.getX() + "," + mobSpawner.getY() + "," + mobSpawner.getZ()
+					 + "] Mob: [" + spawnedMob.getType().getName() + "] Spawn Count: [" + mobList.size() + "]");}
 				
 		}
 		

@@ -1,6 +1,6 @@
 name: MobSpawnControl
 main: net.yeticraft.xxtraineexx.mobspawncontrol.MobSpawnControl
-version: 1.5
+version: 1.8
 authors: [XxTRAINEExX]
 
 commands:
@@ -18,6 +18,8 @@ permissions:
             msc.stats: true
             msc.tp: true
             msc.resetstats: true
+            msc.debug: true
+            msc.reload: true
     msc.command:
         description: Allows player access to MSC commands
         default: op
@@ -29,4 +31,10 @@ permissions:
         default: op
     msc.resetstats:
         description: Allows players access to RESETSTATS command
+        default: op
+    msc.debug:
+        description: Enables MSC debugging
+        default: op
+    msc.reload:
+        description: Reloads config from disk
         default: op

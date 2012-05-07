@@ -26,6 +26,8 @@ public class MSCCommand implements CommandExecutor{
 		STATS,
 		TP,
 		RESETSTATS,
+		DEBUG,
+		RELOAD,
 		UNKNOWN;
 		
 		private static SubCommand toSubCommand(String str) {
@@ -69,6 +71,8 @@ public class MSCCommand implements CommandExecutor{
 	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " STATS: Lists current spawn stats.");
 	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " TP <num>: Teleport to a given spawn location.");
 	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " RESETSTATS: Clears all stats, spawners, mobs.");
+	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " DEBUG: Enables DEBUG mode on the console.");
+	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " RELOAD: Reloads config from disk.");
 	    		break;
 	    	case STATS:
 	    		
@@ -132,9 +136,10 @@ public class MSCCommand implements CommandExecutor{
 	    		}
 	    		
 	    		// Teleport player to spawner
-	    		
 	    		player.teleport(topSpawners.get(spawnNumber).getLocation());
 	    		sender.sendMessage(ChatColor.AQUA +  "Teleporting you to spawner: " + spawnNumber);
+	    		if (plugin.debug){ plugin.log.info(plugin.prefix + sender.getName() + " teleported to spawner at: [" + topSpawners.get(spawnNumber).getLocation().getBlockX() 
+	    				+ "," + topSpawners.get(spawnNumber).getLocation().getBlockY() + "," + topSpawners.get(spawnNumber).getLocation().getBlockZ() + "]");}
 	    		break;
 	      	case RESETSTATS:
 	      		
@@ -161,7 +166,59 @@ public class MSCCommand implements CommandExecutor{
 	    		sender.sendMessage(ChatColor.AQUA + "All stats reset successfully!");
 	    		plugin.log.info(plugin.prefix + "All stats cleared from the server by: " + player.getName());
 				break;
+				
+	      	case DEBUG:
 	      		
+	      		sender.sendMessage(ChatColor.DARK_AQUA + "MobSpawnControl");
+	    		sender.sendMessage(ChatColor.DARK_AQUA + "===============");
+	    		
+	    		// Check permissions for STATS command
+	    		if (!player.hasPermission("msc.debug")) {
+	    			sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
+	    			return true;
+	    		}
+	    		
+	    		if (args.length > 1)
+	    		{
+	    			sender.sendMessage(ChatColor.AQUA + "Too manyparameters! Try /MSC DEBUG");
+	    			return true;
+	    		}
+	    		
+	    		if (plugin.debug) {
+	    			plugin.debug = false;
+	    			sender.sendMessage(ChatColor.AQUA + "Debugging Disabled!");
+		    		plugin.log.info(plugin.prefix + "Debugging disabled by: " + player.getName());
+	    		}
+	    		else{
+	    			plugin.debug = true;
+	    			sender.sendMessage(ChatColor.AQUA + "Debugging Enabled!");
+		    		plugin.log.info(plugin.prefix + "Debugging enabled by: " + player.getName());
+	    		}
+	    			
+				break;
+	      	case RELOAD:
+	      		
+	      		sender.sendMessage(ChatColor.DARK_AQUA + "MobSpawnControl");
+	    		sender.sendMessage(ChatColor.DARK_AQUA + "===============");
+	    		
+	    		// Check permissions for STATS command
+	    		if (!player.hasPermission("msc.reload")) {
+	    			sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
+	    			return true;
+	    		}
+	    		
+	    		if (args.length > 1)
+	    		{
+	    			sender.sendMessage(ChatColor.AQUA + "Too manyparameters! Try /MSC RELOAD");
+	    			return true;
+	    		}
+	    		
+	    		plugin.reloadConfig();
+	    		plugin.loadMainConfig();
+	    		if (plugin.debug){ plugin.log.info(plugin.prefix + "Config reloaded from disk.");}
+	    		sender.sendMessage(ChatColor.AQUA + "Config reloaded from disk.");
+	    			
+				break;
 	    	case UNKNOWN:
 	    		sender.sendMessage(ChatColor.DARK_AQUA + "MobSpawnControl");
 	    		sender.sendMessage(ChatColor.DARK_AQUA + "===============");
