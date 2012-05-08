@@ -69,6 +69,8 @@ public class MSCListener implements Listener{
 		int upperZ = spawnedMobLoc.getZ() + 7;
 		boolean keepLooping = true;
 		
+		
+		
 		// Searching all nearby blocks to find the spawner
 		for (int y = lowerY; y <= upperY && keepLooping; y++){
 			for (int x = lowerX; x <= upperX && keepLooping; x++){
@@ -102,11 +104,12 @@ public class MSCListener implements Listener{
 			
 		}
 
-		// Lets create a new Hashset to store the mobs associated with a spawner
-		Set<UUID> mobList = new HashSet<UUID>();
+		// Lets create a Hashset to store the mobs associated with a spawner
+		Set<UUID> mobList;
 		
-		// If the spawner is NOT in the hashmap we will add the monster to the new mobList and add the spawner/mobList to the spawnerSet hashmap
+		// If the spawner is NOT in the hashmap we need to add this spawner to the hashmap and add this mob to the active mobs
 		if (!activeSpawners.containsKey(mobSpawner)){
+			mobList = new HashSet<UUID>();
 			mobList.add(spawnedMobUUID);
 			activeSpawners.put(mobSpawner, new MSCSpawner(player, mobList));
 			activeMobs.put(spawnedMobUUID, new MSCMob(spawnedMob, mobSpawner));
@@ -127,6 +130,7 @@ public class MSCListener implements Listener{
 			UUID mobUUID = it.next();
 			if (activeMobs.get(mobUUID).getMobEntity().isDead()){
 				mobList.remove(mobUUID);
+				activeMobs.remove(mobUUID);
 				despawnedMobs++;
 			}
 		}
@@ -134,7 +138,6 @@ public class MSCListener implements Listener{
 		
 		// Lets check to see if this set has reached its limit
 		if (mobList.size() >= plugin.spawnsAllowed){
-			plugin.log.info("Spawner maximum reached: " + player.getName() + " [" + mobList.size() + "] "  + mobSpawner.getLocation().toString());
 			if (plugin.debug){ plugin.log.info(plugin.prefix + "FULL Spawner: " + mobSpawner.getLocation().toString() + " Owner: [" + player.getName() + "] Mob: [" + spawnedMob.getType().getName() + "] Spawn Count: [" + mobList.size() + "]");}
 			e.setCancelled(true);
 			return;
@@ -143,9 +146,6 @@ public class MSCListener implements Listener{
 		// Looks like the current mobSpawner is not at its maximum. Let's increment.
 		mobList.add(spawnedMobUUID);
 		activeMobs.put(spawnedMobUUID, new MSCMob(spawnedMob, mobSpawner));
-		
-		
-		
 		if (plugin.debug){ plugin.log.info(plugin.prefix + "EXISTING Spawner: " + mobSpawner.getLocation().toString() + " Owner: [" + player.getName() + "] Mob: [" + spawnedMob.getType().getName() + "] Spawn Count: [" + mobList.size() + "]");}
 		e.setCancelled(false);
 		return;
@@ -168,7 +168,6 @@ public class MSCListener implements Listener{
 			// Removing this mob from the mobSet, spawnList, and UUID map
 			mobList.remove(deadMobUUID);
 			activeMobs.remove(deadMobUUID);
-			
 			
 			if (plugin.debug){ plugin.log.info(plugin.prefix + "MOB removed from Spawner: " + mobSpawner.getLocation().toString() + " Mob: [" + e.getEntity().getType().getName() + "] Spawn Count: [" + mobList.size() + "]");}
 				
@@ -199,12 +198,12 @@ public class MSCListener implements Listener{
 		
 	}
 	
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onChunkLoadEvent(ChunkLoadEvent e) {
 		
 		// Code to keep track of mobs that were in a previously unloaded chunk
 		Chunk loadingChunk = e.getChunk();
-				
 		int attachedMobs = 0;
 				
 		for (Entity loadingMob : loadingChunk.getEntities()) {	

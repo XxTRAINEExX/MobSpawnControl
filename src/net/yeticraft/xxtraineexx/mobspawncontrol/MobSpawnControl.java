@@ -7,6 +7,14 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * 
+ * @author XxTRAINEExX
+ * This is the main class for the plugin. We initialize the listener, load the config, 
+ * and set a few global variables.
+ *
+ */
+
 public class MobSpawnControl extends JavaPlugin{
 
 	public final Logger log = Logger.getLogger("Minecraft");
@@ -34,7 +42,9 @@ public class MobSpawnControl extends JavaPlugin{
 		log.info(prefix + " " + pdffile.getVersion() + " Disabled"); 
 	}
 	
-	
+	/**
+	 * Verifies the config is good. If not, creates a new one and loads it.
+	 */
 	public void loadMainConfig(){
 		// Read the config file
     	config = getConfig();

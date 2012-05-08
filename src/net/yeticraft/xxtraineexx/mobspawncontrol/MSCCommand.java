@@ -9,6 +9,14 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+
+
+/**
+ * @author XxTRAINEExX
+ * This class holds all of the command structure for the plugin. There is also a reporting
+ * method that probably doesn't belong here... but I'm tired so it's going here.
+ *
+ */
 public class MSCCommand implements CommandExecutor{
 
 	
@@ -228,6 +236,10 @@ public class MSCCommand implements CommandExecutor{
 	
 	}
 	
+	/**
+	 * This method executes the spawn report and sends it to the sender.
+	 * 
+	 */
 	public void findTopSpawners(CommandSender sender){
 		
 		HashMap<Block, MSCSpawner> activeSpawners = plugin.myListener.activeSpawners;
