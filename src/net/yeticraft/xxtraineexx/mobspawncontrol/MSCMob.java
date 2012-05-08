@@ -13,8 +13,8 @@ import org.bukkit.entity.Entity;
  */
 public class MSCMob {
 
-	public static Entity mobEntity; // Mob Entity associated with this UUID
-	public static Block mobSpawner; // mobSpawner UUID associated with this Mob
+	Entity mobEntity; // Mob Entity associated with this UUID
+	Block mobSpawner; // mobSpawner UUID associated with this Mob
 	
 	public MSCMob(Entity incEntity, Block incMobSpawner){
 		

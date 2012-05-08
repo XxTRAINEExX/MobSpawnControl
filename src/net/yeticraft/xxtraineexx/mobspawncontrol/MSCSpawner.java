@@ -13,8 +13,8 @@ import org.bukkit.entity.Player;
  */
 public class MSCSpawner {
 
-	public static Player player; // Player associated with this spawner
-	public static Set<UUID> mobList; // Set of Entity UUIDs associated with this spawner (Monsters)
+	Player player; // Player associated with this spawner
+	Set<UUID> mobList; // Set of Entity UUIDs associated with this spawner (Monsters)
 	
 	public MSCSpawner(Player incPlayer, Set<UUID> incMobList){
 		
