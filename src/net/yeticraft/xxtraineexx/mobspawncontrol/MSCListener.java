@@ -129,9 +129,10 @@ public class MSCListener implements Listener{
 
 			UUID mobUUID = it.next();
 			if (activeMobs.get(mobUUID).getMobEntity().isDead()){
-				mobList.remove(mobUUID);
 				activeMobs.remove(mobUUID);
 				despawnedMobs++;
+				it.remove();
+				
 			}
 		}
 		if (plugin.debug){ plugin.log.info(plugin.prefix + "Removed [" + despawnedMobs + "] despawned Mobs in spawner: " + mobSpawner.getLocation().toString());}
