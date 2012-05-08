@@ -25,8 +25,8 @@ public class MSCListener implements Listener{
 
 	public static MobSpawnControl plugin;
 	
-	HashMap<Block, MSCSpawner> activeSpawners = new HashMap<Block, MSCSpawner>();
-	HashMap<UUID, MSCMob> activeMobs = new HashMap<UUID, MSCMob>();
+	public HashMap<Block, MSCSpawner> activeSpawners = new HashMap<Block, MSCSpawner>();
+	public HashMap<UUID, MSCMob> activeMobs = new HashMap<UUID, MSCMob>();
 	
 	public MSCListener(MobSpawnControl plugin) {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -97,13 +97,19 @@ public class MSCListener implements Listener{
 		// Checking for nearby players
 		for (Player nearby : Bukkit.getServer().getOnlinePlayers()) {	
 			double nearbyDistance = nearby.getLocation().distance(mobSpawner.getLocation());
-			if (nearbyDistance <= 17){
+			if (nearbyDistance <= 17.0){
 				player = nearby;
 				break;
 			}
 			
 		}
 
+		// In case we didn't find a nearby Player.. we should leave.
+		if (player==null){
+			if (plugin.debug){ plugin.log.info(plugin.prefix + "No Players found around the spawner. Process halted.");}
+			return;
+		}
+		
 		// Lets create a Hashset to store the mobs associated with a spawner
 		Set<UUID> mobList;
 		
@@ -180,6 +186,8 @@ public class MSCListener implements Listener{
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onChunkUnloadEvent(ChunkUnloadEvent e) {
 		
+		
+		/*
 		// Code to keep track of mobs in a chunk that is about to be unloaded
 		Chunk unloadingChunk = e.getChunk();
 		int detachedMobs = 0;
@@ -197,6 +205,7 @@ public class MSCListener implements Listener{
 		}
 		
 		if (plugin.debug && detachedMobs > 0){ plugin.log.info(plugin.prefix + detachedMobs + " spawner attached mobs were processed in UN-LOADING chunk: ." + unloadingChunk.toString());}
+		*/
 		
 	}
 	
