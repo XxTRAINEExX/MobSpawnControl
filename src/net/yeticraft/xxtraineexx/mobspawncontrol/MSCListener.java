@@ -146,6 +146,7 @@ public class MSCListener implements Listener{
 		
 		// Looks like the current mobSpawner is not at its maximum. Let's increment.
 		mobList.add(spawnedMobUUID);
+		activeSpawners.get(mobSpawner).setPlayer(player);
 		activeMobs.put(spawnedMobUUID, new MSCMob(spawnedMob, mobSpawner));
 		if (plugin.debug){ plugin.log.info(plugin.prefix + "EXISTING Spawner: " + mobSpawner.getLocation().toString() + " Owner: [" + player.getName() + "] Mob: [" + spawnedMob.getType().getName() + "] Spawn Count: [" + mobList.size() + "]");}
 		e.setCancelled(false);
