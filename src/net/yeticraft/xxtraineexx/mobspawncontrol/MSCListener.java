@@ -98,6 +98,9 @@ public class MSCListener implements Listener{
 		
 		// Checking for nearby players
 		for (Player nearby : Bukkit.getServer().getOnlinePlayers()) {	
+			
+			if (!nearby.getWorld().equals(mobSpawner.getWorld())) continue; // Bypassing player that is not in the same world as the spawner
+			
 			double nearbyDistance = nearby.getLocation().distance(mobSpawner.getLocation());
 			if (nearbyDistance <= 17.0){
 				player = nearby;
