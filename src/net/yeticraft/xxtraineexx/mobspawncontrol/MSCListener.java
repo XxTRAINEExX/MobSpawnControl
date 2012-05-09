@@ -25,8 +25,8 @@ public class MSCListener implements Listener{
 
 	public static MobSpawnControl plugin;
 	
-	public HashMap<Block, MSCSpawner> activeSpawners = new HashMap<Block, MSCSpawner>();
-	public HashMap<UUID, MSCMob> activeMobs = new HashMap<UUID, MSCMob>();
+	HashMap<Block, MSCSpawner> activeSpawners = new HashMap<Block, MSCSpawner>();
+	HashMap<UUID, MSCMob> activeMobs = new HashMap<UUID, MSCMob>();
 	
 	public MSCListener(MobSpawnControl plugin) {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -44,6 +44,8 @@ public class MSCListener implements Listener{
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onCreatureSpawn(CreatureSpawnEvent e) {
 		
+		
+		if (!plugin.pluginToggle) return; // Plugin has been manually disabled
 		
 		// If this didn't come from a spawner, return out.
 		if (!e.getSpawnReason().toString().equalsIgnoreCase("SPAWNER")){
@@ -163,6 +165,8 @@ public class MSCListener implements Listener{
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDeath(EntityDeathEvent e) {
 		
+		if (!plugin.pluginToggle) return; // Plugin has been manually disabled
+		
 		UUID deadMobUUID = e.getEntity().getUniqueId();
 		
 		if (activeMobs.containsKey(deadMobUUID)){
@@ -212,6 +216,8 @@ public class MSCListener implements Listener{
 	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onChunkLoadEvent(ChunkLoadEvent e) {
+		
+		if (!plugin.pluginToggle) return; // Plugin has been manually disabled
 		
 		// Code to keep track of mobs that were in a previously unloaded chunk
 		Chunk loadingChunk = e.getChunk();

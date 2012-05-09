@@ -24,6 +24,7 @@ public class MobSpawnControl extends JavaPlugin{
 	public int reportSize;
 	public MSCListener myListener;
 	public boolean debug = false;
+	public boolean pluginToggle = true;
 	
 	public void onEnable() {
 		

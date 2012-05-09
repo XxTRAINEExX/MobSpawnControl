@@ -1,5 +1,6 @@
 package net.yeticraft.xxtraineexx.mobspawncontrol;
 
+
 import java.util.HashMap;
 import java.util.Iterator;
 import org.bukkit.ChatColor;
@@ -36,6 +37,7 @@ public class MSCCommand implements CommandExecutor{
 		RESETSTATS,
 		DEBUG,
 		RELOAD,
+		TOGGLE,
 		UNKNOWN;
 		
 		private static SubCommand toSubCommand(String str) {
@@ -81,6 +83,7 @@ public class MSCCommand implements CommandExecutor{
 	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " RESETSTATS: Clears all stats, spawners, mobs.");
 	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " DEBUG: Enables DEBUG mode on the console.");
 	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " RELOAD: Reloads config from disk.");
+	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " TOGGLE: Enabled/Disables the plugin.");
 	    		break;
 	    	case STATS:
 	    		
@@ -225,6 +228,36 @@ public class MSCCommand implements CommandExecutor{
 	    		sender.sendMessage(ChatColor.AQUA + "Config reloaded from disk.");
 	    			
 				break;
+				
+	      	case TOGGLE:
+	      		
+	      		sender.sendMessage(ChatColor.DARK_AQUA + "MobSpawnControl");
+	    		sender.sendMessage(ChatColor.DARK_AQUA + "===============");
+	    		
+	    		// Check permissions for STATS command
+	    		if (!player.hasPermission("msc.toggle")) {
+	    			sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
+	    			return true;
+	    		}
+	    		
+	    		if (args.length > 1)
+	    		{
+	    			sender.sendMessage(ChatColor.AQUA + "Too manyparameters! Try /MSC RELOAD");
+	    			return true;
+	    		}
+	    		
+	    		if (plugin.pluginToggle) {
+	    			plugin.pluginToggle = false;
+	    			sender.sendMessage(ChatColor.AQUA + "Plugin Disabled!");
+		    		plugin.log.info(plugin.prefix + "Plugin disabled by: " + player.getName());
+	    		}
+	    		else{
+	    			plugin.pluginToggle = true;
+	    			sender.sendMessage(ChatColor.AQUA + "Plugin Enabled!");
+		    		plugin.log.info(plugin.prefix + "Plugin enabled by: " + player.getName());
+	    		}
+	    			
+				break;
 	    	case UNKNOWN:
 	    		sender.sendMessage(ChatColor.DARK_AQUA + "MobSpawnControl");
 	    		sender.sendMessage(ChatColor.DARK_AQUA + "===============");
@@ -244,14 +277,14 @@ public class MSCCommand implements CommandExecutor{
 		
 		HashMap<Block, MSCSpawner> activeSpawners = plugin.myListener.activeSpawners;
 		topSpawners.clear();
-	
+
 		// Iterating through all spawners in the hashmap
 		Iterator<Block> it = activeSpawners.keySet().iterator();
 		int i = 1;
 		while(it.hasNext() && i <= plugin.reportSize) {
-			
+
 			Block spawner = it.next();
-			
+
 			if (activeSpawners.get(spawner).getMobList().size() > (int)((double)plugin.spawnsAllowed * .75)){
 				sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + activeSpawners.get(spawner).getPlayer().getName()
 						+ " : " + ChatColor.RED + activeSpawners.get(spawner).getMobList().size() + "/" + plugin.spawnsAllowed);
@@ -259,7 +292,7 @@ public class MSCCommand implements CommandExecutor{
 				i++;
 				continue;
 			}
-			
+
 			if (activeSpawners.get(spawner).getMobList().size() > (int)((double)plugin.spawnsAllowed * .50)){
 				sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + activeSpawners.get(spawner).getPlayer().getName()
 						+ " : " + ChatColor.YELLOW + activeSpawners.get(spawner).getMobList().size() + "/" + plugin.spawnsAllowed);
@@ -267,17 +300,15 @@ public class MSCCommand implements CommandExecutor{
 				i++;
 				continue;
 			}
-			
+
 			sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + activeSpawners.get(spawner).getPlayer().getName()
 					+ " : " + activeSpawners.get(spawner).getMobList().size() + "/" + plugin.spawnsAllowed);
 			topSpawners.put(i,spawner);
 			i++;
-		
-			
+
+
 		}
 		
 	}
-	
-	
 	
 }
