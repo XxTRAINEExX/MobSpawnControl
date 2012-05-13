@@ -19,7 +19,6 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.event.world.ChunkUnloadEvent;
 
 public class MSCListener implements Listener{
 
@@ -122,7 +121,7 @@ public class MSCListener implements Listener{
 		if (!activeSpawners.containsKey(mobSpawner)){
 			mobList = new HashSet<UUID>();
 			mobList.add(spawnedMobUUID);
-			activeSpawners.put(mobSpawner, new MSCSpawner(player, mobList));
+			activeSpawners.put(mobSpawner, new MSCSpawner(player, mobList, mobSpawner));
 			activeMobs.put(spawnedMobUUID, new MSCMob(spawnedMob, mobSpawner));
 			
 			e.setCancelled(false);
@@ -187,32 +186,6 @@ public class MSCListener implements Listener{
 			if (plugin.debug){ plugin.log.info(plugin.prefix + "MOB removed from Spawner: " + mobSpawner.getLocation().toString() + " Mob: [" + e.getEntity().getType().getName() + "] Spawn Count: [" + mobList.size() + "]");}
 				
 		}
-		
-	}
-	
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void onChunkUnloadEvent(ChunkUnloadEvent e) {
-		
-		
-		/*
-		// Code to keep track of mobs in a chunk that is about to be unloaded
-		Chunk unloadingChunk = e.getChunk();
-		int detachedMobs = 0;
-		
-		for (Entity unloadingMob : unloadingChunk.getEntities()) {	
-			
-			if (activeMobs.containsKey(unloadingMob.getUniqueId())){
-			
-				// Setting their Entity object to NULL so we know they've been popped by the server
-				activeMobs.get(unloadingMob.getUniqueId()).setMobEntity(null);
-				detachedMobs++;
-				
-			}
-			
-		}
-		
-		if (plugin.debug && detachedMobs > 0){ plugin.log.info(plugin.prefix + detachedMobs + " spawner attached mobs were processed in UN-LOADING chunk: ." + unloadingChunk.toString());}
-		*/
 		
 	}
 	

@@ -9,7 +9,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
+import java.util.LinkedList;
+import java.util.ArrayList
+;
 
 
 /**
@@ -22,12 +24,13 @@ public class MSCCommand implements CommandExecutor{
 
 	
 	private final MobSpawnControl plugin;
-	HashMap<Integer, Block> topSpawners = new HashMap<Integer, Block>();
+	ArrayList<Block> topSpawners;
 	
 	
 	
 	public MSCCommand(MobSpawnControl plugin) {
 		this.plugin = plugin;
+		topSpawners = new ArrayList<Block>(plugin.reportSize);
 	}
 
 	enum SubCommand {
@@ -83,7 +86,7 @@ public class MSCCommand implements CommandExecutor{
 	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " RESETSTATS: Clears all stats, spawners, mobs.");
 	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " DEBUG: Enables DEBUG mode on the console.");
 	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " RELOAD: Reloads config from disk.");
-	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " TOGGLE: Enabled/Disables the plugin.");
+	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " TOGGLE: Enables/Disables the plugin.");
 	    		break;
 	    	case STATS:
 	    		
@@ -141,6 +144,12 @@ public class MSCCommand implements CommandExecutor{
 		    	}
 	    		
 	    		// Making sure they entered a valid number in the hashmap
+	    		if ((spawnNumber >= topSpawners.size()) ||
+	    			(spawnNumber < 0))
+	    		{
+	    			sender.sendMessage(ChatColor.AQUA +  "You did not enter a valid NUMBER from the STATS command. Rerun STATS and verify your entry.");
+	    			return true;
+	    		}
 	    		if (topSpawners.get(spawnNumber) == null){
 	    			sender.sendMessage(ChatColor.AQUA +  "You did not enter a valid NUMBER from the STATS command. Rerun STATS and verify your entry.");
 	    			return true;
@@ -280,33 +289,52 @@ public class MSCCommand implements CommandExecutor{
 
 		// Iterating through all spawners in the hashmap
 		Iterator<Block> it = activeSpawners.keySet().iterator();
-		int i = 1;
-		while(it.hasNext() && i <= plugin.reportSize) {
-
-			Block spawner = it.next();
-
-			if (activeSpawners.get(spawner).getMobList().size() > (int)((double)plugin.spawnsAllowed * .75)){
-				sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + activeSpawners.get(spawner).getPlayer().getName()
-						+ " : " + ChatColor.RED + activeSpawners.get(spawner).getMobList().size() + "/" + plugin.spawnsAllowed);
-				topSpawners.put(i,spawner);
-				i++;
-				continue;
+		
+		// Temporary list to store the top ten spawners into
+		LinkedList<MSCSpawner> templist = new LinkedList<MSCSpawner>();
+		
+		
+		while (it.hasNext())
+		{
+		   Block cur_block = it.next();
+		   MSCSpawner cur_spawner = activeSpawners.get(cur_block);
+		   cur_spawner.temp_counter = cur_spawner.getMobList().size();
+		   for (int i=0; i < plugin.reportSize; i++)
+		   {	
+			   // If we hit the end of the list before hitting the the top n items, add this one
+			   	if (i >= templist.size())
+			   	{
+			   		templist.add(cur_spawner);
+			   		break;
+			   	}
+			   	// If our current item has more mobs than the current index, then we need to insert it
+			   	if (cur_spawner.temp_counter > templist.get(i).temp_counter)
+			   	{
+			   		templist.add(i, cur_spawner);
+			   		break;
+			   	}
+		   }
+		}
+		
+		//At this point, we have at least the configured number of spawners in our linked list...
+		for (int i = 0; (i < plugin.reportSize) && (i < templist.size()); i++)
+		{
+			MSCSpawner cur_spawner = templist.get(i);
+			
+			topSpawners.add(i, cur_spawner.getBlock());
+			
+			if (cur_spawner.temp_counter > (int)((double)plugin.spawnsAllowed * .75)){
+				sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + cur_spawner.getPlayer().getName()
+						+ " : " + ChatColor.RED + cur_spawner.temp_counter + "/" + plugin.spawnsAllowed);
 			}
-
-			if (activeSpawners.get(spawner).getMobList().size() > (int)((double)plugin.spawnsAllowed * .50)){
-				sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + activeSpawners.get(spawner).getPlayer().getName()
-						+ " : " + ChatColor.YELLOW + activeSpawners.get(spawner).getMobList().size() + "/" + plugin.spawnsAllowed);
-				topSpawners.put(i,spawner);
-				i++;
-				continue;
+			else if (cur_spawner.temp_counter > (int)((double)plugin.spawnsAllowed * .50)){
+				sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + cur_spawner.getPlayer().getName()
+						+ " : " + ChatColor.YELLOW + cur_spawner.temp_counter + "/" + plugin.spawnsAllowed);
 			}
-
-			sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + activeSpawners.get(spawner).getPlayer().getName()
-					+ " : " + activeSpawners.get(spawner).getMobList().size() + "/" + plugin.spawnsAllowed);
-			topSpawners.put(i,spawner);
-			i++;
-
-
+			else {
+				sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + cur_spawner.getPlayer().getName()
+						+ " : " +  cur_spawner.temp_counter + "/" + plugin.spawnsAllowed);
+			}
 		}
 		
 	}

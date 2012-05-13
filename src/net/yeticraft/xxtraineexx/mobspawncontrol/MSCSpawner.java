@@ -3,6 +3,8 @@ package net.yeticraft.xxtraineexx.mobspawncontrol;
 
 import java.util.Set;
 import java.util.UUID;
+
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 /**
@@ -15,11 +17,14 @@ public class MSCSpawner {
 
 	Player player; // Player associated with this spawner
 	Set<UUID> mobList; // Set of Entity UUIDs associated with this spawner (Monsters)
+	Block block;
+	int temp_counter; // Counter to keep lists consistent for printing
 	
-	public MSCSpawner(Player incPlayer, Set<UUID> incMobList){
+	public MSCSpawner(Player incPlayer, Set<UUID> incMobList, Block incBlock){
 		
 		player=incPlayer;
 		mobList=incMobList;
+		block=incBlock;
 		
 	}
 	
@@ -62,5 +67,22 @@ public class MSCSpawner {
 		mobList = incMobList;
 	}
 	
+	/**
+	 * Sets the Block where this spawner is located
+	 * @param inblock The block associated with the spawner
+	 */
+	public void setBlock(Block inblock)
+	{
+		block = inblock;
+	}
+	
+	/**
+	 * Returns the block where this spawner is located
+	 * @return The block where this spawner is located
+	 */
+	public Block getBlock()
+	{
+		return block;
+	}
 	
 }
