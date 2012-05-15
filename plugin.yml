@@ -1,6 +1,6 @@
 name: MobSpawnControl
 main: net.yeticraft.xxtraineexx.mobspawncontrol.MobSpawnControl
-version: 2.2
+version: 2.3
 authors: [XxTRAINEExX]
 
 commands:
@@ -40,5 +40,5 @@ permissions:
         description: Reloads config from disk
         default: op
     msc.toggle:
-        description: Reloads config from disk
+        description: Turns the plugin ON and OFF
         default: op
