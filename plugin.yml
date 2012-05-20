@@ -1,6 +1,6 @@
 name: MobSpawnControl
 main: net.yeticraft.xxtraineexx.mobspawncontrol.MobSpawnControl
-version: 2.3.1
+version: 2.3.2
 authors: [XxTRAINEExX]
 
 commands:

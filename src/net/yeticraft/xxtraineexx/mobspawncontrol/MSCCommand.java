@@ -53,9 +53,16 @@ public class MSCCommand implements CommandExecutor{
 	}
 	
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		
-	Player player = (Player)sender;
-	if (!player.hasPermission("msc.command")) {return true;}
+	
+	boolean isPlayer = false;
+	if (sender instanceof Player) isPlayer = true;
+	
+	Player player;
+	if (isPlayer){
+		player = (Player)sender;
+		if (!player.hasPermission("msc.command")) {return true;}	
+	}
+	
 	
   	if (args.length == 0) {
   		sender.sendMessage(ChatColor.DARK_AQUA + "MobSpawnControl");
@@ -94,9 +101,12 @@ public class MSCCommand implements CommandExecutor{
 	    		sender.sendMessage(ChatColor.DARK_AQUA + "=====================");
 	    		
 	    		// Check permissions for STATS command
-	    		if (!player.hasPermission("msc.stats")) {
-	    			sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
-	    			return true;
+	    		if (isPlayer){
+	    			player = (Player)sender;
+	    			if (!player.hasPermission("msc.stats")) {
+	    				sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
+	    				return true;
+	    			}
 	    		}
 	    		
 	    		if (args.length > 1)
@@ -112,10 +122,19 @@ public class MSCCommand implements CommandExecutor{
 	    		sender.sendMessage(ChatColor.DARK_AQUA + "MobSpawnControl TP");
 	    		sender.sendMessage(ChatColor.DARK_AQUA + "==================");
 	    		
-	    		// Check permissions for TP command
-	    		if (!player.hasPermission("msc.tp")) {
-	    			sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
+	    		// Not going to allow TP for the console
+	    		if (!isPlayer){
+	    			sender.sendMessage(ChatColor.DARK_AQUA + "How do you expect to teleport from a console?");
 	    			return true;
+	    		}
+	    		
+	    		// Check permissions for TP command
+	    		if (isPlayer){
+	    			player = (Player)sender;
+	    			if (!player.hasPermission("msc.tp")) {
+	    				sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
+	    				return true;
+	    			}
 	    		}
 
 	    		// Did they type too many parameters?
@@ -129,7 +148,7 @@ public class MSCCommand implements CommandExecutor{
 	    		if (args.length == 1)
 	    		{
 	    			sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " TP <type> <num>: Teleport to a given stat location.");
-					sender.sendMessage(ChatColor.AQUA +  "<num> :  Number pulled from the STATS list.");
+	    			sender.sendMessage(ChatColor.AQUA +  "<num> :  Number pulled from the STATS list.");
 		   		return true;
 	    		}
 	    		
@@ -156,20 +175,26 @@ public class MSCCommand implements CommandExecutor{
 	    		}
 	    		
 	    		// Teleport player to spawner
-	    		player.teleport(topSpawners.get(spawnNumber).getLocation());
-	    		sender.sendMessage(ChatColor.AQUA +  "Teleporting you to spawner: " + spawnNumber);
-	    		if (plugin.debug){ plugin.log.info(plugin.prefix + sender.getName() + " teleported to spawner at: [" + topSpawners.get(spawnNumber).getLocation().getBlockX() 
-	    				+ "," + topSpawners.get(spawnNumber).getLocation().getBlockY() + "," + topSpawners.get(spawnNumber).getLocation().getBlockZ() + "]");}
+	    		if (isPlayer){
+	    			player = (Player)sender;
+	    			player.teleport(topSpawners.get(spawnNumber).getLocation());
+	    			sender.sendMessage(ChatColor.AQUA +  "Teleporting you to spawner: " + spawnNumber);
+	    			if (plugin.debug){ plugin.log.info(plugin.prefix + sender.getName() + " teleported to spawner at: [" + topSpawners.get(spawnNumber).getLocation().getBlockX() 
+	    					+ "," + topSpawners.get(spawnNumber).getLocation().getBlockY() + "," + topSpawners.get(spawnNumber).getLocation().getBlockZ() + "]");}
+	    		}
 	    		break;
 	      	case RESETSTATS:
 	      		
 	      		sender.sendMessage(ChatColor.DARK_AQUA + "MobSpawnControl");
-	    		sender.sendMessage(ChatColor.DARK_AQUA + "===============");
+	      		sender.sendMessage(ChatColor.DARK_AQUA + "===============");
 	    		
 	    		// Check permissions for STATS command
-	    		if (!player.hasPermission("msc.resetstats")) {
-	    			sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
-	    			return true;
+	    		if (isPlayer){
+	    			player = (Player)sender;
+	    			if (!player.hasPermission("msc.resetstats")) {
+	    				sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
+	    				return true;
+	    			}
 	    		}
 	    		
 	    		if (args.length > 1)
@@ -182,20 +207,29 @@ public class MSCCommand implements CommandExecutor{
 	    		plugin.myListener.activeSpawners.clear();
 	    		topSpawners.clear();
 	    		sender.sendMessage(ChatColor.AQUA + "All stats reset successfully!");
-	    		plugin.log.info(plugin.prefix + "All stats cleared from the server by: " + player.getName());
+	    		if (isPlayer){
+	    			player = (Player)sender;
+	    			plugin.log.info(plugin.prefix + "All stats cleared from the server by: " + player.getName());
+	    		}
+	    		else{
+	    			plugin.log.info(plugin.prefix + "All stats cleared from the server by: console");
+	    		}
 				break;
 				
 	      	case DEBUG:
 	      		
 	      		sender.sendMessage(ChatColor.DARK_AQUA + "MobSpawnControl");
-	    		sender.sendMessage(ChatColor.DARK_AQUA + "===============");
+	      		sender.sendMessage(ChatColor.DARK_AQUA + "===============");
 	    		
 	    		// Check permissions for STATS command
-	    		if (!player.hasPermission("msc.debug")) {
-	    			sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
-	    			return true;
-	    		}
-	    		
+	      		if (isPlayer){
+	    			player = (Player)sender;
+	    			if (!player.hasPermission("msc.debug")) {
+	      				sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
+	      				return true;
+	      			}
+	      		}
+	      		
 	    		if (args.length > 1)
 	    		{
 	    			sender.sendMessage(ChatColor.AQUA + "Too manyparameters! Try /MSC DEBUG");
@@ -205,26 +239,42 @@ public class MSCCommand implements CommandExecutor{
 	    		if (plugin.debug) {
 	    			plugin.debug = false;
 	    			sender.sendMessage(ChatColor.AQUA + "Debugging Disabled!");
-		    		plugin.log.info(plugin.prefix + "Debugging disabled by: " + player.getName());
+	    			if (isPlayer){
+		    			player = (Player)sender;
+		    			plugin.log.info(plugin.prefix + "Debugging disabled by: " + player.getName());
+	    			}
+	    			else{
+	    				plugin.log.info(plugin.prefix + "Debugging disabled by: console");
+	    			}
 	    		}
+	    		
 	    		else{
 	    			plugin.debug = true;
 	    			sender.sendMessage(ChatColor.AQUA + "Debugging Enabled!");
-		    		plugin.log.info(plugin.prefix + "Debugging enabled by: " + player.getName());
+	    			if (isPlayer){
+		    			player = (Player)sender;
+		    			plugin.log.info(plugin.prefix + "Debugging enabled by: " + player.getName());
+	    			}
+	    			else{
+	    				plugin.log.info(plugin.prefix + "Debugging enabled by: console");
+	    			}
 	    		}
 	    			
 				break;
 	      	case RELOAD:
 	      		
 	      		sender.sendMessage(ChatColor.DARK_AQUA + "MobSpawnControl");
-	    		sender.sendMessage(ChatColor.DARK_AQUA + "===============");
+	      		sender.sendMessage(ChatColor.DARK_AQUA + "===============");
 	    		
 	    		// Check permissions for STATS command
-	    		if (!player.hasPermission("msc.reload")) {
-	    			sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
-	    			return true;
-	    		}
-	    		
+    			if (isPlayer){
+	    			player = (Player)sender;
+	    			if (!player.hasPermission("msc.reload")) {
+	    				sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
+	    				return true;
+	      			}
+    			}	    
+    			
 	    		if (args.length > 1)
 	    		{
 	    			sender.sendMessage(ChatColor.AQUA + "Too manyparameters! Try /MSC RELOAD");
@@ -241,29 +291,44 @@ public class MSCCommand implements CommandExecutor{
 	      	case TOGGLE:
 	      		
 	      		sender.sendMessage(ChatColor.DARK_AQUA + "MobSpawnControl");
-	    		sender.sendMessage(ChatColor.DARK_AQUA + "===============");
+	      		sender.sendMessage(ChatColor.DARK_AQUA + "===============");
 	    		
 	    		// Check permissions for STATS command
-	    		if (!player.hasPermission("msc.toggle")) {
-	    			sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
-	    			return true;
-	    		}
-	    		
+    			if (isPlayer){
+	    			player = (Player)sender;
+	    			if (!player.hasPermission("msc.toggle")) {
+	    				sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
+	    				return true;
+	    			}
+    			}
+    			
 	    		if (args.length > 1)
 	    		{
-	    			sender.sendMessage(ChatColor.AQUA + "Too manyparameters! Try /MSC RELOAD");
+	    			sender.sendMessage(ChatColor.AQUA + "Too manyparameters! Try /MSC TOGGLE");
 	    			return true;
 	    		}
 	    		
 	    		if (plugin.pluginToggle) {
 	    			plugin.pluginToggle = false;
 	    			sender.sendMessage(ChatColor.AQUA + "Plugin Disabled!");
-		    		plugin.log.info(plugin.prefix + "Plugin disabled by: " + player.getName());
+	    			if (isPlayer){
+		    			player = (Player)sender;
+		    			plugin.log.info(plugin.prefix + "Plugin disabled by: " + player.getName());
+	    			}
+	    			else{
+	    				plugin.log.info(plugin.prefix + "Plugin disabled by: console");
+	    			}
 	    		}
 	    		else{
 	    			plugin.pluginToggle = true;
 	    			sender.sendMessage(ChatColor.AQUA + "Plugin Enabled!");
-		    		plugin.log.info(plugin.prefix + "Plugin enabled by: " + player.getName());
+	    			if (isPlayer){
+		    			player = (Player)sender;
+		    			plugin.log.info(plugin.prefix + "Plugin enabled by: " + player.getName());
+	    			}
+	    			else{
+	    				plugin.log.info(plugin.prefix + "Plugin enabled by: console");
+	    			}
 	    		}
 	    			
 				break;
