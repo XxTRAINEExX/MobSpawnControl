@@ -54,14 +54,15 @@ public class MSCCommand implements CommandExecutor{
 	
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 	
+	if (!sender.hasPermission("msc.command")) {return true;}	
+	
 	boolean isPlayer = false;
 	if (sender instanceof Player) isPlayer = true;
 	
 	Player player;
 	if (isPlayer){
 		player = (Player)sender;
-		if (!player.hasPermission("msc.command")) {return true;}	
-	}
+		}
 	
 	
   	if (args.length == 0) {
@@ -87,13 +88,14 @@ public class MSCCommand implements CommandExecutor{
 	    			sender.sendMessage(ChatColor.AQUA + "Too manyparameters! Try /MSC HELP");
 	    			return true;
 	    		}
+
 	    		sender.sendMessage(ChatColor.AQUA + " /" + command.getName() + " HELP: Shows this help page");
-	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " STATS: Lists current spawn stats.");
-	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " TP <num>: Teleport to a given spawn location.");
-	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " RESETSTATS: Clears all stats, spawners, mobs.");
-	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " DEBUG: Enables DEBUG mode on the console.");
-	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " RELOAD: Reloads config from disk.");
-	    		sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " TOGGLE: Enables/Disables the plugin.");
+	    		if (sender.hasPermission("msc.stats")) sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " STATS: Lists current spawn stats.");
+	    		if (sender.hasPermission("msc.tp")) sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " TP <num>: Teleport to a given spawn location.");
+	    		if (sender.hasPermission("msc.resetstats")) sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " RESETSTATS: Clears all stats, spawners, mobs.");
+	    		if (sender.hasPermission("msc.debug")) sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " DEBUG: Enables DEBUG mode on the console.");
+	    		if (sender.hasPermission("msc.reload")) sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " RELOAD: Reloads config from disk.");
+	    		if (sender.hasPermission("msc.toggle")) sender.sendMessage(ChatColor.AQUA +  " /" + command.getName() + " TOGGLE: Enables/Disables the plugin.");
 	    		break;
 	    	case STATS:
 	    		
