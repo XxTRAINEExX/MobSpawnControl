@@ -44,7 +44,7 @@ public class MSCListener implements Listener{
 	public void onCreatureSpawn(CreatureSpawnEvent e) {
 		
 		
-		if (!plugin.pluginToggle) return; // Plugin has been manually disabled
+		if (!plugin.pluginEnable) return; // Plugin has been manually disabled
 		
 		// If this didn't come from a spawner, return out.
 		if (!e.getSpawnReason().toString().equalsIgnoreCase("SPAWNER")){
@@ -62,12 +62,12 @@ public class MSCListener implements Listener{
 		Player player = null;
 		
 		// Mobs can only spawn within a 8x3x8 area
-		int lowerX = spawnedMobLoc.getX() - 7;
-		int upperX = spawnedMobLoc.getX() + 7;
-		int lowerY = spawnedMobLoc.getY() - 2;
-		int upperY = spawnedMobLoc.getY() + 2;
-		int lowerZ = spawnedMobLoc.getZ() - 7;
-		int upperZ = spawnedMobLoc.getZ() + 7;
+		int lowerX = spawnedMobLoc.getX() - plugin.spawnerRadiusX;
+		int upperX = spawnedMobLoc.getX() + plugin.spawnerRadiusX;
+		int lowerY = spawnedMobLoc.getY() - plugin.spawnerRadiusY;
+		int upperY = spawnedMobLoc.getY() + plugin.spawnerRadiusY;
+		int lowerZ = spawnedMobLoc.getZ() - plugin.spawnerRadiusZ;
+		int upperZ = spawnedMobLoc.getZ() + plugin.spawnerRadiusZ;
 		boolean keepLooping = true;
 		
 		
@@ -101,7 +101,7 @@ public class MSCListener implements Listener{
 			if (!nearby.getWorld().equals(mobSpawner.getWorld())) continue; // Bypassing player that is not in the same world as the spawner
 			
 			double nearbyDistance = nearby.getLocation().distance(mobSpawner.getLocation());
-			if (nearbyDistance <= 17.0){
+			if (nearbyDistance <= plugin.playerDistance){
 				player = nearby;
 				break;
 			}
@@ -167,7 +167,7 @@ public class MSCListener implements Listener{
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDeath(EntityDeathEvent e) {
 		
-		if (!plugin.pluginToggle) return; // Plugin has been manually disabled
+		if (!plugin.pluginEnable) return; // Plugin has been manually disabled
 		
 		UUID deadMobUUID = e.getEntity().getUniqueId();
 		
@@ -193,7 +193,7 @@ public class MSCListener implements Listener{
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onChunkLoadEvent(ChunkLoadEvent e) {
 		
-		if (!plugin.pluginToggle) return; // Plugin has been manually disabled
+		if (!plugin.pluginEnable) return; // Plugin has been manually disabled
 		
 		// Code to keep track of mobs that were in a previously unloaded chunk
 		Chunk loadingChunk = e.getChunk();

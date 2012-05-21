@@ -259,7 +259,7 @@ public class MSCCommand implements CommandExecutor{
 	    				plugin.log.info(plugin.prefix + "Debugging enabled by: console");
 	    			}
 	    		}
-	    			
+	    		plugin.saveMainConfig();
 				break;
 	      	case RELOAD:
 	      		
@@ -308,8 +308,8 @@ public class MSCCommand implements CommandExecutor{
 	    			return true;
 	    		}
 	    		
-	    		if (plugin.pluginToggle) {
-	    			plugin.pluginToggle = false;
+	    		if (plugin.pluginEnable) {
+	    			plugin.pluginEnable = false;
 	    			sender.sendMessage(ChatColor.AQUA + "Plugin Disabled!");
 	    			if (isPlayer){
 		    			player = (Player)sender;
@@ -320,7 +320,7 @@ public class MSCCommand implements CommandExecutor{
 	    			}
 	    		}
 	    		else{
-	    			plugin.pluginToggle = true;
+	    			plugin.pluginEnable = true;
 	    			sender.sendMessage(ChatColor.AQUA + "Plugin Enabled!");
 	    			if (isPlayer){
 		    			player = (Player)sender;
@@ -330,7 +330,7 @@ public class MSCCommand implements CommandExecutor{
 	    				plugin.log.info(plugin.prefix + "Plugin enabled by: console");
 	    			}
 	    		}
-	    			
+	    		plugin.saveMainConfig();
 				break;
 	    	case UNKNOWN:
 	    		sender.sendMessage(ChatColor.DARK_AQUA + "MobSpawnControl");
@@ -388,11 +388,11 @@ public class MSCCommand implements CommandExecutor{
 			
 			topSpawners.add(i, cur_spawner.getBlock());
 			
-			if (cur_spawner.temp_counter > (int)((double)plugin.spawnsAllowed * .75)){
+			if (cur_spawner.temp_counter >= (int)((double)plugin.spawnsAllowed * plugin.alertThreshold)){
 				sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + cur_spawner.getPlayer().getName()
 						+ " : " + ChatColor.RED + cur_spawner.temp_counter + "/" + plugin.spawnsAllowed);
 			}
-			else if (cur_spawner.temp_counter > (int)((double)plugin.spawnsAllowed * .50)){
+			else if (cur_spawner.temp_counter >= (int)((double)plugin.spawnsAllowed * plugin.warnThreshold)){
 				sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + cur_spawner.getPlayer().getName()
 						+ " : " + ChatColor.YELLOW + cur_spawner.temp_counter + "/" + plugin.spawnsAllowed);
 			}
