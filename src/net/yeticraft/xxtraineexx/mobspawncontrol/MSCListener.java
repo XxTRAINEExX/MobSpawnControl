@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
@@ -137,13 +136,13 @@ public class MSCListener implements Listener{
 		int despawnedMobs = 0;
 		while(it.hasNext()) {
 
-			UUID mobUUID = it.next();
-			if (activeMobs.get(mobUUID).getMobEntity().isDead()){
+		    UUID mobUUID = it.next();
+		    if (activeMobs.get(mobUUID).getMobEntity().isDead()){
 				activeMobs.remove(mobUUID);
 				despawnedMobs++;
 				it.remove();
-				
 			}
+			   
 		}
 		if (plugin.debug){ plugin.log.info(plugin.prefix + "Removed [" + despawnedMobs + "] despawned Mobs in spawner: " + mobSpawner.getLocation().toString());}
 		
@@ -154,10 +153,19 @@ public class MSCListener implements Listener{
 			return;
 		}
 		
+		// Checking to see if the chunk has reached its limit
+		int mobsInChunk = spawnedMob.getLocation().getChunk().getEntities().length;
+		if (plugin.chunkLimitEnable && (mobsInChunk >= plugin.chunkLimit)){
+		    if (plugin.debug){ plugin.log.info(plugin.prefix + "Full Chunk: " + mobSpawner.getLocation().getChunk().toString() + " Owner: [" + player.getName() + "] Chunk Count: [" + mobsInChunk + "]");}
+            e.setCancelled(true);
+            return;
+		}
+		
 		// Looks like the current mobSpawner is not at its maximum. Let's increment.
 		mobList.add(spawnedMobUUID);
 		activeSpawners.get(mobSpawner).setPlayer(player);
 		activeMobs.put(spawnedMobUUID, new MSCMob(spawnedMob, mobSpawner));
+		
 		if (plugin.debug){ plugin.log.info(plugin.prefix + "EXISTING Spawner: " + mobSpawner.getLocation().toString() + " Owner: [" + player.getName() + "] Mob: [" + spawnedMob.getType().getName() + "] Spawn Count: [" + mobList.size() + "]");}
 		e.setCancelled(false);
 		return;
