@@ -31,8 +31,6 @@ public class MobSpawnControl extends JavaPlugin{
 	public int spawnerRadiusY;
 	public int spawnerRadiusZ;
 	public double playerDistance;
-	public boolean chunkLimitEnable;
-	public int chunkLimit;
 
 	
 	public void onEnable() {
@@ -75,8 +73,6 @@ public class MobSpawnControl extends JavaPlugin{
         spawnerRadiusY = config.getInt("spawnerRadiusY");
         spawnerRadiusZ = config.getInt("spawnerRadiusZ");
         playerDistance = config.getDouble("playerDistance");
-        chunkLimitEnable = config.getBoolean("chunkLimitEnable");
-        chunkLimit = config.getInt("chunkLimit");
         
     	log.info(prefix + "Config loaded.");
     	if (debug) {
@@ -91,8 +87,6 @@ public class MobSpawnControl extends JavaPlugin{
     		log.info(prefix + "[spawnerRadiusY: " + spawnerRadiusY + "]");
     		log.info(prefix + "[spawnerRadiusZ: " + spawnerRadiusZ + "]");
     		log.info(prefix + "[playerDistance: " + playerDistance + "]");
-    		log.info(prefix + "[chunkLimitEnable: " + String.valueOf(chunkLimitEnable) + "]");
-    		log.info(prefix + "[chunkLimit: " + chunkLimit + "]");
     	}
     	
 	}
@@ -113,8 +107,6 @@ public class MobSpawnControl extends JavaPlugin{
 		config.set("spawnerRadiusY", spawnerRadiusY);
 		config.set("spawnerRadiusZ", spawnerRadiusZ);
 		config.set("playerDistance", playerDistance);
-		config.set("chunkLimitEnable", chunkLimitEnable);
-		config.set("chunkLimit", chunkLimit);
 		
 		saveConfig();
 		log.info(prefix + "Config saved.");
@@ -130,9 +122,6 @@ public class MobSpawnControl extends JavaPlugin{
     		log.info(prefix + "[spawnerRadiusY: " + spawnerRadiusY + "]");
     		log.info(prefix + "[spawnerRadiusZ: " + spawnerRadiusZ + "]");
     		log.info(prefix + "[playerDistance: " + playerDistance + "]");
-    		log.info(prefix + "[chunkLimitEnable: " + String.valueOf(chunkLimitEnable) + "]");
-    		log.info(prefix + "[chunkLimit: " + chunkLimit + "]");
-            
   	}
 		
 	}

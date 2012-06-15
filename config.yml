@@ -1,4 +1,4 @@
-spawnsAllowed: 25
+spawnsAllowed: 80
 reportSize: 10
 pluginEnable: true
 debug: false
@@ -9,5 +9,3 @@ spawnerRadiusX: 7
 spawnerRadiusY: 2
 spawnerRadiusZ: 7
 playerDistance: 17.0
-chunkLimitEnable: false
-chunkLimit: 50
