@@ -5,7 +5,7 @@ debug: false
 oneTimeUse: false
 warnThreshold: 0.50
 alertThreshold: 0.75
-spawnerRadiusX: 7
-spawnerRadiusY: 2
-spawnerRadiusZ: 7
+spawnerRadiusX: 3
+spawnerRadiusY: 1
+spawnerRadiusZ: 3
 playerDistance: 17.0
