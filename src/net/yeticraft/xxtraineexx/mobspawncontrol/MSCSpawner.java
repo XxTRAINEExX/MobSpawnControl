@@ -1,6 +1,5 @@
 package net.yeticraft.xxtraineexx.mobspawncontrol;
 
-
 import java.util.Set;
 import java.util.UUID;
 
@@ -19,70 +18,59 @@ public class MSCSpawner {
 	Set<UUID> mobList; // Set of Entity UUIDs associated with this spawner (Monsters)
 	Block block;
 	int temp_counter; // Counter to keep lists consistent for printing
-	
-	public MSCSpawner(Player incPlayer, Set<UUID> incMobList, Block incBlock){
-		
-		player=incPlayer;
-		mobList=incMobList;
-		block=incBlock;
-		
+
+	public MSCSpawner(Player incPlayer, Set<UUID> incMobList, Block incBlock) {
+		player = incPlayer;
+		mobList = incMobList;
+		block = incBlock;
 	}
-	
-	
+
 	/**
 	 * 
 	 * @return Bukkit player object associated with this spawner
 	 */
-	public Player getPlayer(){
+	public Player getPlayer() {
 		return player;
 	}
-	
-	
+
 	/**
 	 * 
 	 * @return Java HashSet Set<UUID> containing all Mob UUIDs associated with this spawner
 	 */
-	public Set<UUID> getMobList(){
+	public Set<UUID> getMobList() {
 		return mobList;
 	}
-	
-	
+
 	/**
 	 * Sets the Player associated with this spawner.
 	 * @param Bukkit Player object
 	 * 
 	 */
-	public void setPlayer(Player incPlayer){
-		
+	public void setPlayer(Player incPlayer) {
 		player = incPlayer;
-		
 	}
-	
-	
+
 	/**
 	 * Sets the Java HashSet Set<UUID> containing all Mob UUIDs associated with this spawner
 	 * @param Java HashSet Set<UUID> containing all Mob UUIDs associated with this spawner
 	 */
-	public void setMobList(Set<UUID> incMobList){
+	public void setMobList(Set<UUID> incMobList) {
 		mobList = incMobList;
 	}
-	
+
 	/**
 	 * Sets the Block where this spawner is located
 	 * @param inblock The block associated with the spawner
 	 */
-	public void setBlock(Block inblock)
-	{
+	public void setBlock(Block inblock) {
 		block = inblock;
 	}
-	
+
 	/**
 	 * Returns the block where this spawner is located
 	 * @return The block where this spawner is located
 	 */
-	public Block getBlock()
-	{
+	public Block getBlock() {
 		return block;
 	}
-	
 }
