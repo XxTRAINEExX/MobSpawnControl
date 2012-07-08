@@ -52,16 +52,6 @@ public class MSCCommand implements CommandExecutor {
 			return true;
 		}
 
-		boolean isPlayer = false;
-		if (sender instanceof Player) {
-			isPlayer = true;
-		}
-
-		Player player;
-		if (isPlayer) {
-			player = (Player) sender;
-		}
-
 		if (args.length == 0) {
 			sender.sendMessage(ChatColor.DARK_AQUA + "MobSpawnControl");
 			sender.sendMessage(ChatColor.DARK_AQUA + "===============");
@@ -111,12 +101,9 @@ public class MSCCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.DARK_AQUA + "=====================");
 
 				// Check permissions for STATS command
-				if (isPlayer) {
-					player = (Player) sender;
-					if (!player.hasPermission("msc.stats")) {
-						sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
-						return true;
-					}
+				if (!sender.hasPermission("msc.stats")) {
+					sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
+					return true;
 				}
 
 				if (args.length > 1) {
@@ -132,18 +119,15 @@ public class MSCCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.DARK_AQUA + "==================");
 
 				// Not going to allow TP for the console
-				if (!isPlayer) {
+				if (!(sender instanceof Player)) {
 					sender.sendMessage(ChatColor.DARK_AQUA + "How do you expect to teleport from a console?");
 					return true;
 				}
 
 				// Check permissions for TP command
-				if (isPlayer) {
-					player = (Player) sender;
-					if (!player.hasPermission("msc.tp")) {
-						sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
-						return true;
-					}
+				if (!sender.hasPermission("msc.tp")) {
+					sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
+					return true;
 				}
 
 				// Did they type too many parameters?
@@ -180,14 +164,12 @@ public class MSCCommand implements CommandExecutor {
 				}
 
 				// Teleport player to spawner
-				if (isPlayer) {
-					player = (Player) sender;
-					player.teleport(topSpawners.get(spawnNumber).getLocation());
-					sender.sendMessage(ChatColor.AQUA + "Teleporting you to spawner: " + spawnNumber);
-					if (plugin.debug) {
-						plugin.log.info(plugin.prefix + sender.getName() + " teleported to spawner at: [" + topSpawners.get(spawnNumber).getLocation().getBlockX()
-								+ "," + topSpawners.get(spawnNumber).getLocation().getBlockY() + "," + topSpawners.get(spawnNumber).getLocation().getBlockZ() + "]");
-					}
+				Player player = (Player) sender; // Cast already checked near beginning of command handler
+				player.teleport(topSpawners.get(spawnNumber).getLocation());
+				sender.sendMessage(ChatColor.AQUA + "Teleporting you to spawner #" + spawnNumber);
+				if (plugin.debug) {
+					plugin.log.info(plugin.prefix + sender.getName() + " teleported to spawner at: [" + topSpawners.get(spawnNumber).getLocation().getBlockX()
+							+ "," + topSpawners.get(spawnNumber).getLocation().getBlockY() + "," + topSpawners.get(spawnNumber).getLocation().getBlockZ() + "]");
 				}
 				break;
 			case RESETSTATS:
@@ -196,12 +178,9 @@ public class MSCCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.DARK_AQUA + "===============");
 
 				// Check permissions for STATS command
-				if (isPlayer) {
-					player = (Player) sender;
-					if (!player.hasPermission("msc.resetstats")) {
-						sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
-						return true;
-					}
+				if (!sender.hasPermission("msc.resetstats")) {
+					sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
+					return true;
 				}
 
 				if (args.length > 1) {
@@ -213,12 +192,7 @@ public class MSCCommand implements CommandExecutor {
 				plugin.myListener.activeSpawners.clear();
 				topSpawners.clear();
 				sender.sendMessage(ChatColor.AQUA + "All stats reset successfully!");
-				if (isPlayer) {
-					player = (Player) sender;
-					plugin.log.info(plugin.prefix + "All stats cleared from the server by: " + player.getName());
-				} else {
-					plugin.log.info(plugin.prefix + "All stats cleared from the server by: console");
-				}
+				plugin.log.info(plugin.prefix + "All stats cleared from the server by " + sender.getName());
 				break;
 
 			case DEBUG:
@@ -227,12 +201,9 @@ public class MSCCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.DARK_AQUA + "===============");
 
 				// Check permissions for STATS command
-				if (isPlayer) {
-					player = (Player) sender;
-					if (!player.hasPermission("msc.debug")) {
-						sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
-						return true;
-					}
+				if (!sender.hasPermission("msc.debug")) {
+					sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
+					return true;
 				}
 
 				if (args.length > 1) {
@@ -243,21 +214,11 @@ public class MSCCommand implements CommandExecutor {
 				if (plugin.debug) {
 					plugin.debug = false;
 					sender.sendMessage(ChatColor.AQUA + "Debugging Disabled!");
-					if (isPlayer) {
-						player = (Player) sender;
-						plugin.log.info(plugin.prefix + "Debugging disabled by: " + player.getName());
-					} else {
-						plugin.log.info(plugin.prefix + "Debugging disabled by: console");
-					}
+					plugin.log.info(plugin.prefix + "Debugging disabled by " + sender.getName());
 				} else {
 					plugin.debug = true;
 					sender.sendMessage(ChatColor.AQUA + "Debugging Enabled!");
-					if (isPlayer) {
-						player = (Player) sender;
-						plugin.log.info(plugin.prefix + "Debugging enabled by: " + player.getName());
-					} else {
-						plugin.log.info(plugin.prefix + "Debugging enabled by: console");
-					}
+					plugin.log.info(plugin.prefix + "Debugging enabled by " + sender.getName());
 				}
 				plugin.saveMainConfig();
 				break;
@@ -267,12 +228,9 @@ public class MSCCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.DARK_AQUA + "===============");
 
 				// Check permissions for STATS command
-				if (isPlayer) {
-					player = (Player) sender;
-					if (!player.hasPermission("msc.reload")) {
-						sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
-						return true;
-					}
+				if (!sender.hasPermission("msc.reload")) {
+					sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
+					return true;
 				}
 
 				if (args.length > 1) {
@@ -295,12 +253,9 @@ public class MSCCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.DARK_AQUA + "===============");
 
 				// Check permissions for STATS command
-				if (isPlayer) {
-					player = (Player) sender;
-					if (!player.hasPermission("msc.toggle")) {
-						sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
-						return true;
-					}
+				if (!sender.hasPermission("msc.toggle")) {
+					sender.sendMessage(ChatColor.DARK_AQUA + "Permissions DENIED.");
+					return true;
 				}
 
 				if (args.length > 1) {
@@ -311,21 +266,11 @@ public class MSCCommand implements CommandExecutor {
 				if (plugin.pluginEnable) {
 					plugin.pluginEnable = false;
 					sender.sendMessage(ChatColor.AQUA + "Plugin Disabled!");
-					if (isPlayer) {
-						player = (Player) sender;
-						plugin.log.info(plugin.prefix + "Plugin disabled by: " + player.getName());
-					} else {
-						plugin.log.info(plugin.prefix + "Plugin disabled by: console");
-					}
+					plugin.log.info(plugin.prefix + "Plugin disabled by " + sender.getName());
 				} else {
 					plugin.pluginEnable = true;
 					sender.sendMessage(ChatColor.AQUA + "Plugin Enabled!");
-					if (isPlayer) {
-						player = (Player) sender;
-						plugin.log.info(plugin.prefix + "Plugin enabled by: " + player.getName());
-					} else {
-						plugin.log.info(plugin.prefix + "Plugin enabled by: console");
-					}
+					plugin.log.info(plugin.prefix + "Plugin enabled by " + sender.getName());
 				}
 				plugin.saveMainConfig();
 				break;
@@ -347,15 +292,14 @@ public class MSCCommand implements CommandExecutor {
 		topSpawners.clear();
 
 		// Iterating through all spawners in the hashmap
-		Iterator<Block> it = activeSpawners.keySet().iterator();
+		Iterator<MSCSpawner> it = activeSpawners.values().iterator();
 
 		// Temporary list to store the top ten spawners into
 		LinkedList<MSCSpawner> templist = new LinkedList<MSCSpawner>();
 
 
 		while (it.hasNext()) {
-			Block cur_block = it.next();
-			MSCSpawner cur_spawner = activeSpawners.get(cur_block);
+			MSCSpawner cur_spawner = it.next();
 			cur_spawner.temp_counter = cur_spawner.getMobList().size();
 			for (int i = 0; i < plugin.reportSize; i++) {
 				// If we hit the end of the list before hitting the the top n items, add this one
