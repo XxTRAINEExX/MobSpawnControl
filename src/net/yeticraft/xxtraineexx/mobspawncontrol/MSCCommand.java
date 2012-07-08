@@ -1,15 +1,12 @@
 package net.yeticraft.xxtraineexx.mobspawncontrol;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import java.util.LinkedList;
-import java.util.ArrayList;
 
 /**
  * @author XxTRAINEExX
@@ -20,7 +17,7 @@ import java.util.ArrayList;
 public class MSCCommand implements CommandExecutor {
 
 	private final MobSpawnControl plugin;
-	ArrayList<Block> topSpawners;
+	private List<Block> topSpawners;
 
 	public MSCCommand(MobSpawnControl plugin) {
 		this.plugin = plugin;
@@ -168,7 +165,7 @@ public class MSCCommand implements CommandExecutor {
 				player.teleport(topSpawners.get(spawnNumber).getLocation());
 				sender.sendMessage(ChatColor.AQUA + "Teleporting you to spawner #" + spawnNumber);
 				if (plugin.debug) {
-					plugin.log.info(plugin.prefix + sender.getName() + " teleported to spawner at: [" + topSpawners.get(spawnNumber).getLocation().getBlockX()
+					plugin.getLogger().info(sender.getName() + " teleported to spawner at: [" + topSpawners.get(spawnNumber).getLocation().getBlockX()
 							+ "," + topSpawners.get(spawnNumber).getLocation().getBlockY() + "," + topSpawners.get(spawnNumber).getLocation().getBlockZ() + "]");
 				}
 				break;
@@ -192,7 +189,7 @@ public class MSCCommand implements CommandExecutor {
 				plugin.myListener.activeSpawners.clear();
 				topSpawners.clear();
 				sender.sendMessage(ChatColor.AQUA + "All stats reset successfully!");
-				plugin.log.info(plugin.prefix + "All stats cleared from the server by " + sender.getName());
+				plugin.getLogger().info("All stats cleared from the server by " + sender.getName());
 				break;
 
 			case DEBUG:
@@ -214,11 +211,11 @@ public class MSCCommand implements CommandExecutor {
 				if (plugin.debug) {
 					plugin.debug = false;
 					sender.sendMessage(ChatColor.AQUA + "Debugging Disabled!");
-					plugin.log.info(plugin.prefix + "Debugging disabled by " + sender.getName());
+					plugin.getLogger().info("Debugging disabled by " + sender.getName());
 				} else {
 					plugin.debug = true;
 					sender.sendMessage(ChatColor.AQUA + "Debugging Enabled!");
-					plugin.log.info(plugin.prefix + "Debugging enabled by " + sender.getName());
+					plugin.getLogger().info("Debugging enabled by " + sender.getName());
 				}
 				plugin.saveMainConfig();
 				break;
@@ -241,7 +238,7 @@ public class MSCCommand implements CommandExecutor {
 				plugin.reloadConfig();
 				plugin.loadMainConfig();
 				if (plugin.debug) {
-					plugin.log.info(plugin.prefix + "Config reloaded from disk.");
+					plugin.getLogger().info("Config reloaded from disk.");
 				}
 				sender.sendMessage(ChatColor.AQUA + "Config reloaded from disk.");
 
@@ -266,11 +263,11 @@ public class MSCCommand implements CommandExecutor {
 				if (plugin.pluginEnable) {
 					plugin.pluginEnable = false;
 					sender.sendMessage(ChatColor.AQUA + "Plugin Disabled!");
-					plugin.log.info(plugin.prefix + "Plugin disabled by " + sender.getName());
+					plugin.getLogger().info("Plugin disabled by " + sender.getName());
 				} else {
 					plugin.pluginEnable = true;
 					sender.sendMessage(ChatColor.AQUA + "Plugin Enabled!");
-					plugin.log.info(plugin.prefix + "Plugin enabled by " + sender.getName());
+					plugin.getLogger().info("Plugin enabled by " + sender.getName());
 				}
 				plugin.saveMainConfig();
 				break;
@@ -288,7 +285,7 @@ public class MSCCommand implements CommandExecutor {
 	 * 
 	 */
 	public void findTopSpawners(CommandSender sender) {
-		HashMap<Block, MSCSpawner> activeSpawners = plugin.myListener.activeSpawners;
+		Map<Block, MSCSpawner> activeSpawners = plugin.myListener.activeSpawners;
 		topSpawners.clear();
 
 		// Iterating through all spawners in the hashmap

@@ -1,10 +1,6 @@
 package net.yeticraft.xxtraineexx.mobspawncontrol;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -16,22 +12,17 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 
 public class MSCListener implements Listener {
 
-	public static MobSpawnControl plugin;
-	HashMap<Block, MSCSpawner> activeSpawners = new HashMap<Block, MSCSpawner>();
-	HashMap<UUID, MSCMob> activeMobs = new HashMap<UUID, MSCMob>();
+	private final MobSpawnControl plugin;
+	Map<Block, MSCSpawner> activeSpawners = new HashMap<Block, MSCSpawner>();
+	Map<UUID, MSCMob> activeMobs = new HashMap<UUID, MSCMob>();
 
 	public MSCListener(MobSpawnControl plugin) {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		MSCListener.plugin = plugin;
-	}
-
-	public void onPluginEnable(PluginEnableEvent event) {
-		plugin.log.info(("Plugin detected: " + event.getPlugin().toString()));
+		this.plugin = plugin;
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -47,7 +38,7 @@ public class MSCListener implements Listener {
 
 		// Find the spawner this monster came from.
 		Block spawnedMobLoc = e.getLocation().getBlock();
-		Block currentBlock = null;
+		Block currentBlock;
 		Block mobSpawner = null;
 		UUID spawnedMobUUID = e.getEntity().getUniqueId();
 		Entity spawnedMob = e.getEntity();
@@ -68,7 +59,6 @@ public class MSCListener implements Listener {
 		for (int y = lowerY; y <= upperY && keepLooping; y++) {
 			for (int x = lowerX; x <= upperX && keepLooping; x++) {
 				for (int z = lowerZ; z <= upperZ; z++) {
-
 					currentBlock = e.getLocation().getWorld().getBlockAt(x, y, z);
 					if (currentBlock.getTypeId() == 52) {
 						mobSpawner = currentBlock;
@@ -82,7 +72,7 @@ public class MSCListener implements Listener {
 
 		// If mobSpawner is still null we must have missed the spawner somehow.
 		if (mobSpawner == null) {
-			plugin.log.info(plugin.prefix + "Spawner not found for spawned creature at: " + spawnedMob.getLocation().toString());
+			plugin.getLogger().info("Spawner not found for spawned creature at: " + spawnedMob.getLocation().toString());
 			return;
 		}
 
@@ -102,7 +92,7 @@ public class MSCListener implements Listener {
 		// In case we didn't find a nearby Player.. we should leave.
 		if (player == null) {
 			if (plugin.debug) {
-				plugin.log.info(plugin.prefix + "No Players found around the spawner. Process halted.");
+				plugin.getLogger().info("No Players found around the spawner. Process halted.");
 			}
 			return;
 		}
@@ -119,7 +109,7 @@ public class MSCListener implements Listener {
 
 			e.setCancelled(false);
 			if (plugin.debug) {
-				plugin.log.info(plugin.prefix + "NEW Spawner: " + mobSpawner.getLocation().toString() + " Owner: [" + player.getName() + "] Mob: [" + spawnedMob.getType().getName() + "] Spawn Count: [" + mobList.size() + "]");
+				plugin.getLogger().info("NEW Spawner: " + mobSpawner.getLocation().toString() + " Owner: [" + player.getName() + "] Mob: [" + spawnedMob.getType().getName() + "] Spawn Count: [" + mobList.size() + "]");
 			}
 			return;
 		}
@@ -141,13 +131,13 @@ public class MSCListener implements Listener {
 			}
 		}
 		if (plugin.debug) {
-			plugin.log.info(plugin.prefix + "Removed [" + despawnedMobs + "] despawned Mobs in spawner: " + mobSpawner.getLocation().toString());
+			plugin.getLogger().info("Removed [" + despawnedMobs + "] despawned Mobs in spawner: " + mobSpawner.getLocation().toString());
 		}
 
 		// Lets check to see if this set has reached its limit
 		if (mobList.size() >= plugin.spawnsAllowed) {
 			if (plugin.debug) {
-				plugin.log.info(plugin.prefix + "FULL Spawner: " + mobSpawner.getLocation().toString() + " Owner: [" + player.getName() + "] Mob: [" + spawnedMob.getType().getName() + "] Spawn Count: [" + mobList.size() + "]");
+				plugin.getLogger().info("FULL Spawner: " + mobSpawner.getLocation().toString() + " Owner: [" + player.getName() + "] Mob: [" + spawnedMob.getType().getName() + "] Spawn Count: [" + mobList.size() + "]");
 			}
 			e.setCancelled(true);
 			return;
@@ -158,10 +148,9 @@ public class MSCListener implements Listener {
 		activeSpawners.get(mobSpawner).setPlayer(player);
 		activeMobs.put(spawnedMobUUID, new MSCMob(spawnedMob, mobSpawner));
 		if (plugin.debug) {
-			plugin.log.info(plugin.prefix + "EXISTING Spawner: " + mobSpawner.getLocation().toString() + " Owner: [" + player.getName() + "] Mob: [" + spawnedMob.getType().getName() + "] Spawn Count: [" + mobList.size() + "]");
+			plugin.getLogger().info("EXISTING Spawner: " + mobSpawner.getLocation().toString() + " Owner: [" + player.getName() + "] Mob: [" + spawnedMob.getType().getName() + "] Spawn Count: [" + mobList.size() + "]");
 		}
 		e.setCancelled(false);
-		return;
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -185,7 +174,7 @@ public class MSCListener implements Listener {
 			activeMobs.remove(deadMobUUID);
 
 			if (plugin.debug) {
-				plugin.log.info(plugin.prefix + "MOB removed from Spawner: " + mobSpawner.getLocation().toString() + " Mob: [" + e.getEntity().getType().getName() + "] Spawn Count: [" + mobList.size() + "]");
+				plugin.getLogger().info("MOB removed from Spawner: " + mobSpawner.getLocation().toString() + " Mob: [" + e.getEntity().getType().getName() + "] Spawn Count: [" + mobList.size() + "]");
 			}
 		}
 	}
@@ -209,7 +198,7 @@ public class MSCListener implements Listener {
 		}
 
 		if (plugin.debug && attachedMobs > 0) {
-			plugin.log.info(plugin.prefix + attachedMobs + " spawner attached mobs were processed in LOADING chunk: ." + loadingChunk.toString());
+			plugin.getLogger().info(attachedMobs + " spawner attached mobs were processed in LOADING chunk: ." + loadingChunk.toString());
 		}
 	}
 }
