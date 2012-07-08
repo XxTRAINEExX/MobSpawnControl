@@ -319,13 +319,13 @@ public class MSCCommand implements CommandExecutor {
 			topSpawners.add(i, cur_spawner.getBlock());
 
 			if (cur_spawner.temp_counter >= (int) ((double) plugin.spawnsAllowed * plugin.alertThreshold)) {
-				sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + cur_spawner.getPlayer().getName()
+				sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + cur_spawner.getPlayerName()
 						+ " : " + ChatColor.RED + cur_spawner.temp_counter + "/" + plugin.spawnsAllowed);
 			} else if (cur_spawner.temp_counter >= (int) ((double) plugin.spawnsAllowed * plugin.warnThreshold)) {
-				sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + cur_spawner.getPlayer().getName()
+				sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + cur_spawner.getPlayerName()
 						+ " : " + ChatColor.YELLOW + cur_spawner.temp_counter + "/" + plugin.spawnsAllowed);
 			} else {
-				sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + cur_spawner.getPlayer().getName()
+				sender.sendMessage(ChatColor.AQUA + "[" + i + "] " + cur_spawner.getPlayerName()
 						+ " : " + cur_spawner.temp_counter + "/" + plugin.spawnsAllowed);
 			}
 		}

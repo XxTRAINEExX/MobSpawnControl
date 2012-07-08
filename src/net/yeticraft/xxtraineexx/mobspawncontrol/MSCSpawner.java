@@ -14,39 +14,37 @@ import org.bukkit.entity.Player;
  */
 public class MSCSpawner {
 
-	private Player player; // Player associated with this spawner
+	private String player; // Player associated with this spawner
 	private Set<UUID> mobList; // Set of Entity UUIDs associated with this spawner (Monsters)
 	private Block block;
 	public int temp_counter; // Counter to keep lists consistent for printing
 
-	public MSCSpawner(Player incPlayer, Set<UUID> incMobList, Block incBlock) {
+	public MSCSpawner(String incPlayer, Set<UUID> incMobList, Block incBlock) {
 		player = incPlayer;
 		mobList = incMobList;
 		block = incBlock;
 	}
 
 	/**
-	 * 
-	 * @return Bukkit player object associated with this spawner
+	 * @return Name of the player associated with this spawner
 	 */
-	public Player getPlayer() {
+	public String getPlayerName() {
 		return player;
 	}
 
 	/**
-	 * 
-	 * @return Java HashSet Set<UUID> containing all Mob UUIDs associated with this spawner
+	 * @return A {@link Set}&lt;{@link UUID}&gt; containing all Mob UUIDs associated with this spawner
 	 */
 	public Set<UUID> getMobList() {
 		return mobList;
 	}
 
 	/**
-	 * Sets the Player associated with this spawner.
-	 * @param Bukkit Player object
+	 * Sets the player associated with this spawner.
+	 * @param incPlayer Player name
 	 * 
 	 */
-	public void setPlayer(Player incPlayer) {
+	public void setPlayerName(String incPlayer) {
 		player = incPlayer;
 	}
 

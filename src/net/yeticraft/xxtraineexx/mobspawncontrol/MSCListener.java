@@ -104,7 +104,7 @@ public class MSCListener implements Listener {
 		if (!activeSpawners.containsKey(mobSpawner)) {
 			mobList = new HashSet<UUID>();
 			mobList.add(spawnedMobUUID);
-			activeSpawners.put(mobSpawner, new MSCSpawner(player, mobList, mobSpawner));
+			activeSpawners.put(mobSpawner, new MSCSpawner(player.getName(), mobList, mobSpawner));
 			activeMobs.put(spawnedMobUUID, new MSCMob(spawnedMob, mobSpawner));
 
 			e.setCancelled(false);
@@ -145,7 +145,7 @@ public class MSCListener implements Listener {
 
 		// Looks like the current mobSpawner is not at its maximum. Let's increment.
 		mobList.add(spawnedMobUUID);
-		activeSpawners.get(mobSpawner).setPlayer(player);
+		activeSpawners.get(mobSpawner).setPlayerName(player.getName());
 		activeMobs.put(spawnedMobUUID, new MSCMob(spawnedMob, mobSpawner));
 		if (plugin.debug) {
 			plugin.getLogger().info("EXISTING Spawner: " + mobSpawner.getLocation().toString() + " Owner: [" + player.getName() + "] Mob: [" + spawnedMob.getType().getName() + "] Spawn Count: [" + mobList.size() + "]");
