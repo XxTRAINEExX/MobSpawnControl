@@ -63,7 +63,7 @@ public class MSCCommand implements CommandExecutor {
 		}
 
 
-		switch (SubCommand.toSubCommand(args[0].toUpperCase())) {
+		switch (SubCommand.toSubCommand(args[0])) {
 			case HELP:
 				sender.sendMessage(ChatColor.DARK_AQUA + "MobSpawnControl Help");
 				sender.sendMessage(ChatColor.DARK_AQUA + "====================");
