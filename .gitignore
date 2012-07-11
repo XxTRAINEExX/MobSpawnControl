@@ -6,3 +6,10 @@
 /libraries
 /bin
 /lib
+
+# NetBeans
+build.xml
+manifest.mf
+nbproject/
+dist/
+build/

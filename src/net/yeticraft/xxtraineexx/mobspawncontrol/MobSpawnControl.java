@@ -13,11 +13,8 @@ import org.bukkit.plugin.java.JavaPlugin;
  * and set a few global variables.
  *
  */
+public class MobSpawnControl extends JavaPlugin {
 
-public class MobSpawnControl extends JavaPlugin{
-
-	public final Logger log = Logger.getLogger("Minecraft");
-	public String prefix = "[MobSpawnControl] ";
 	public FileConfiguration config;
 	public MSCListener myListener;
 	public int spawnsAllowed;
@@ -32,70 +29,59 @@ public class MobSpawnControl extends JavaPlugin{
 	public int spawnerRadiusZ;
 	public double playerDistance;
 
-	
+	@Override
 	public void onEnable() {
-		
 		myListener = new MSCListener(this);
-		PluginDescriptionFile pdffile = this.getDescription();
 		loadMainConfig();
 		CommandExecutor MSCCommandExecutor = new MSCCommand(this);
 		getCommand("mobspawncontrol").setExecutor(MSCCommandExecutor);
-    	getCommand("msc").setExecutor(MSCCommandExecutor);  	
-    	log.info(prefix + " " + pdffile.getVersion() + " Enabled"); 	
-    	
+		getCommand("msc").setExecutor(MSCCommandExecutor);
 	}
-	
-	public void onDisable() {
-		PluginDescriptionFile pdffile = this.getDescription(); 
-		log.info(prefix + " " + pdffile.getVersion() + " Disabled"); 
-	}
-	
+
 	/**
 	 * Config loading method.
 	 */
-	public void loadMainConfig(){
-
+	public void loadMainConfig() {
 		// Read the config file
 		config = getConfig();
 		config.options().copyDefaults(true);
-        saveConfig();
-		
-		
-    	// Assign all the local variables
-    	spawnsAllowed = config.getInt("spawnsAllowed");
-    	reportSize = config.getInt("reportSize");
-       	pluginEnable = config.getBoolean("pluginEnable");
-        debug = config.getBoolean("debug");
-        oneTimeUse = config.getBoolean("oneTimeUse");
-        warnThreshold = config.getDouble("warnThreshold");
-        alertThreshold = config.getDouble("alertThreshold");
-        spawnerRadiusX = config.getInt("spawnerRadiusX");
-        spawnerRadiusY = config.getInt("spawnerRadiusY");
-        spawnerRadiusZ = config.getInt("spawnerRadiusZ");
-        playerDistance = config.getDouble("playerDistance");
-        
-    	log.info(prefix + "Config loaded.");
-    	if (debug) {
-    		log.info(prefix + "[spawnsAllowed: " + spawnsAllowed + "] ");
-    		log.info(prefix + "[reportSize: " + reportSize + "]");
-    		log.info(prefix + "[pluginEnable: " + String.valueOf(pluginEnable) + "]");
-    		log.info(prefix + "[debug: " + String.valueOf(debug) + "]");
-    		log.info(prefix + "[oneTimeUse: " + String.valueOf(oneTimeUse) + "]"); 
-    		log.info(prefix + "[warnThreshold: " + warnThreshold + "] ");
-    		log.info(prefix + "[alertThreshold: " + alertThreshold + "]");
-    		log.info(prefix + "[spawnerRadiusX: " + spawnerRadiusX + "]");
-    		log.info(prefix + "[spawnerRadiusY: " + spawnerRadiusY + "]");
-    		log.info(prefix + "[spawnerRadiusZ: " + spawnerRadiusZ + "]");
-    		log.info(prefix + "[playerDistance: " + playerDistance + "]");
-    	}
-    	
+		saveConfig();
+
+		// Assign all the local variables
+		spawnsAllowed = config.getInt("spawnsAllowed");
+		reportSize = config.getInt("reportSize");
+		pluginEnable = config.getBoolean("pluginEnable");
+		debug = config.getBoolean("debug");
+		oneTimeUse = config.getBoolean("oneTimeUse");
+		warnThreshold = config.getDouble("warnThreshold");
+		alertThreshold = config.getDouble("alertThreshold");
+		spawnerRadiusX = config.getInt("spawnerRadiusX");
+		spawnerRadiusY = config.getInt("spawnerRadiusY");
+		spawnerRadiusZ = config.getInt("spawnerRadiusZ");
+		playerDistance = config.getDouble("playerDistance");
+
+		final Logger log = getLogger();
+		log.info("Config loaded.");
+		if (debug) {
+			log.info("[spawnsAllowed: " + spawnsAllowed + "] ");
+			log.info("[reportSize: " + reportSize + "]");
+			log.info("[pluginEnable: " + String.valueOf(pluginEnable) + "]");
+			log.info("[debug: " + String.valueOf(debug) + "]");
+			log.info("[oneTimeUse: " + String.valueOf(oneTimeUse) + "]");
+			log.info("[warnThreshold: " + warnThreshold + "] ");
+			log.info("[alertThreshold: " + alertThreshold + "]");
+			log.info("[spawnerRadiusX: " + spawnerRadiusX + "]");
+			log.info("[spawnerRadiusY: " + spawnerRadiusY + "]");
+			log.info("[spawnerRadiusZ: " + spawnerRadiusZ + "]");
+			log.info("[playerDistance: " + playerDistance + "]");
+		}
 	}
-	
+
 	/**
 	 * Config saving method.
 	 */
-	public void saveMainConfig(){
-	
+	public void saveMainConfig() {
+
 		config.set("spawnsAllowed", spawnsAllowed);
 		config.set("reportSize", reportSize);
 		config.set("pluginEnable", pluginEnable);
@@ -107,24 +93,23 @@ public class MobSpawnControl extends JavaPlugin{
 		config.set("spawnerRadiusY", spawnerRadiusY);
 		config.set("spawnerRadiusZ", spawnerRadiusZ);
 		config.set("playerDistance", playerDistance);
-		
-		saveConfig();
-		log.info(prefix + "Config saved.");
-		if (debug) {
-			log.info(prefix + "[spawnsAllowed: " + spawnsAllowed + "] ");
-    		log.info(prefix + "[reportSize: " + reportSize + "]");
-    		log.info(prefix + "[pluginEnable: " + String.valueOf(pluginEnable) + "]");
-    		log.info(prefix + "[debug: " + String.valueOf(debug) + "]");
-    		log.info(prefix + "[oneTimeUse: " + String.valueOf(oneTimeUse) + "]"); 
-    		log.info(prefix + "[warnThreshold: " + warnThreshold + "] ");
-    		log.info(prefix + "[alertThreshold: " + alertThreshold + "]");
-    		log.info(prefix + "[spawnerRadiusX: " + spawnerRadiusX + "]");
-    		log.info(prefix + "[spawnerRadiusY: " + spawnerRadiusY + "]");
-    		log.info(prefix + "[spawnerRadiusZ: " + spawnerRadiusZ + "]");
-    		log.info(prefix + "[playerDistance: " + playerDistance + "]");
-  	}
-		
-	}
-	
 
+		saveConfig();
+
+		final Logger log = getLogger();
+		log.info("Config saved.");
+		if (debug) {
+			log.info("[spawnsAllowed: " + spawnsAllowed + "] ");
+			log.info("[reportSize: " + reportSize + "]");
+			log.info("[pluginEnable: " + String.valueOf(pluginEnable) + "]");
+			log.info("[debug: " + String.valueOf(debug) + "]");
+			log.info("[oneTimeUse: " + String.valueOf(oneTimeUse) + "]");
+			log.info("[warnThreshold: " + warnThreshold + "] ");
+			log.info("[alertThreshold: " + alertThreshold + "]");
+			log.info("[spawnerRadiusX: " + spawnerRadiusX + "]");
+			log.info("[spawnerRadiusY: " + spawnerRadiusY + "]");
+			log.info("[spawnerRadiusZ: " + spawnerRadiusZ + "]");
+			log.info("[playerDistance: " + playerDistance + "]");
+		}
+	}
 }
