@@ -4,7 +4,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 
 /**
  * @author XxTRAINEExX
